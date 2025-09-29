@@ -9,7 +9,7 @@ const links = [
   { ref: "/services", text: "Services" },
   { ref: "/experience", text: "Experience" },
   { ref: "/work", text: "Work" },
-  { ref: "/workTogether", text: "Contact" },
+  { ref: "/contact", text: "Contact" },
 ];
 
 const Navbar = () => {
