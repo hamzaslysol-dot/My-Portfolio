@@ -21,7 +21,7 @@ const Services = () => {
           </Container>
         </div>
         <div className="bg-black h-auto xs:min-h-screen md:min-h-screen lg:min-h-screen flex items-center justify-center p-6">
-          <h1 className="text-white text-4xl xs:8xl md:text-8xl items-start xs:items-center md:items-center font-bold xs:font-extrabold leading-tight text-center">
+          <h1 className="text-white text-4xl xs:8xl md:text-8xl font-bold xs:font-extrabold leading-tight text-center w-full xs:w-min md:w-fit lg:w-min">
             BRANDING WEB DESIGN MARKETING DRAWING
           </h1>
         </div>
