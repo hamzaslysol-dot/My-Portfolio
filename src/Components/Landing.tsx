@@ -18,16 +18,16 @@ const Landing = () => {
         dataneedcolor-bg="false"
         src={Img}
         alt="Profile"
-        className="absolute inset-0 w-fit xs:w-full md:w-full lg:w-full h-auto object-cover opacity-70"
+        className="absolute inset-0 w-fit xs:w-full md:w-full lg:w-full h-auto xs:h-full object-cover opacity-70"
       />
       <div className="absolute inset-0 bg-black/60"></div>
       <div className="relative z-10 text-center flex flex-col items-center">
         <div className="relative leading-none">
-          <h1 className="text-4xl xs:text-6xl md:text-9xl font-extrabold tracking-tight bg-clip-text text-outline">
+          <h1 className="text-4xl xs:text-9xl md:text-6xl lg:text-9xl font-extrabold tracking-tight bg-clip-text text-outline">
             Hamza
           </h1>
 
-          <h1 className="text-4xl sm:text-6xl md:text-9xl font-extrabold tracking-tight bg-clip-text text-outline">
+          <h1 className="text-4xl sm:text-9xl md:text-6xl lg:text-9xl font-extrabold tracking-tight bg-clip-text text-outline">
             Latif
           </h1>
         </div>
