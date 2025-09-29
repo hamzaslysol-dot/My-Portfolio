@@ -18,7 +18,7 @@ const Landing = () => {
         dataneedcolor-bg="false"
         src={Img}
         alt="Profile"
-        className="absolute inset-0 w-full h-full object-cover opacity-70"
+        className="absolute inset-0 w-fit xs:w-full md:w-full lg:w-full h-auto object-cover opacity-70"
       />
       <div className="absolute inset-0 bg-black/60"></div>
       <div className="relative z-10 text-center flex flex-col items-center">

@@ -80,7 +80,7 @@ const Contact = () => {
                   ! All the fields are required. By sending the form you agree
                   to the
                   <span className="underline"> Terms and Condition</span> and
-                  <span className="underline"> Privacy Policy </span>.
+                  <span className="underline"> Privacy Policy. </span>
                 </p>
               </div>
               <div className="pt-2 pr-2 flex justify-center xs:justify-end ">
