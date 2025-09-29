@@ -23,11 +23,11 @@ const Landing = () => {
       <div className="absolute inset-0 bg-black/60"></div>
       <div className="relative z-10 text-center flex flex-col items-center">
         <div className="relative leading-none">
-          <h1 className="text-9xl font-extrabold tracking-tight bg-clip-text text-outline">
+          <h1 className="text-4xl xs:text-6xl md:text-9xl font-extrabold tracking-tight bg-clip-text text-outline">
             Hamza
           </h1>
 
-          <h1 className="text-9xl font-extrabold tracking-tight bg-clip-text text-outline">
+          <h1 className="text-4xl sm:text-6xl md:text-9xl font-extrabold tracking-tight bg-clip-text text-outline">
             Latif
           </h1>
         </div>
