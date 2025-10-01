@@ -1,4 +1,4 @@
-import Img from "../assets/Adobe Express - file.png";
+import Img from "../assets/Adobe Express - file (1).png";
 import { ChevronDown } from "lucide-react"; // scroll icon
 import "../index.css";
 
