@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import Hlogo from "../assets/h.png";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
@@ -31,39 +30,49 @@ const Navbar = () => {
         `}
     >
       <div className="flex justify-between items-center py-4 px-6 text-white">
-        <Link to="/">
+        <a href="/" target="_blank" rel="noopener noreferrer">
           <img
             src={Hlogo}
             alt="Logo"
             className="w-12 lg:flex justify-between xs:hidden md:hidden hover:scale-110 transition-transform duration-300"
           />
-        </Link>
+        </a>
+
+        {/* Mobile toggle */}
         <button className="lg:hidden block" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
         </button>
-        <div className="hidden  lg:flex gap-8 font-medium">
+
+        {/* Desktop Menu */}
+        <div className="hidden lg:flex gap-8 font-medium">
           {links.map((link, index) => (
-            <Link
+            <a
               key={index}
-              to={link.ref}
+              href={link.ref}
+              target="_blank"
+              rel="noopener noreferrer"
               className="hover:text-blue-300 transition-colors"
             >
               {link.text}
-            </Link>
+            </a>
           ))}
         </div>
       </div>
+
+      {/* Mobile Menu */}
       {isOpen && (
         <div className="lg:hidden flex flex-col gap-6 px-6 pb-6 bg-gray-800 text-white">
           {links.map((link, index) => (
-            <Link
+            <a
               key={index}
-              to={link.ref}
+              href={link.ref}
+              target="_blank"
+              rel="noopener noreferrer"
               className="hover:text-blue-300 transition-colors"
               onClick={() => setIsOpen(false)}
             >
               {link.text}
-            </Link>
+            </a>
           ))}
         </div>
       )}

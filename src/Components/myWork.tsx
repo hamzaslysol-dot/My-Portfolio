@@ -62,7 +62,9 @@ const MyWork = () => {
                     className="mt-5 mx-auto"
                   />
                   <p className="font-bold text-xl text-center">
-                    <a href={project.href}> {project.label}</a>
+                    <a href={project.href} target="__blank">
+                      {project.label}
+                    </a>
                   </p>
                 </div>
               ))}
