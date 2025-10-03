@@ -3,5 +3,4 @@
 .text-outline {
     color: transparent;
     -webkit-text-stroke: 0.3px white;
-    /* white border */
 }

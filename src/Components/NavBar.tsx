@@ -1,6 +1,7 @@
-import Hlogo from "../assets/h.png";
+// import Hlogo from "../assets/h.png";/
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
+import "../index.css";
 
 const links = [
   { ref: "/home", text: "Home" },
@@ -26,18 +27,15 @@ const Navbar = () => {
   return (
     <nav
       className={`fixed top-0 left-0 w-full transition-transform duration-500 z-50
-        ${show ? "translate-y-0 bg-gray-900/90 shadow-md" : "-translate-y-full"}
+        ${
+          show
+            ? "translate-y-0 bg-black/50 backdrop-blur-md "
+            : "-translate-y-full"
+        }
         `}
     >
       <div className="flex justify-between items-center py-4 px-6 text-white">
-        <a href="/" target="_blank" rel="noopener noreferrer">
-          <img
-            src={Hlogo}
-            alt="Logo"
-            className="w-12 lg:flex justify-between xs:hidden md:hidden hover:scale-110 transition-transform duration-300"
-          />
-        </a>
-
+        <h1 className="text-5xl font-extrabold text-outline">H</h1>
         {/* Mobile toggle */}
         <button className="lg:hidden block" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}

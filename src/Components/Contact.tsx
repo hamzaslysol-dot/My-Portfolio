@@ -112,7 +112,7 @@ const Contact = () => {
                 className="border-2 border-white p-2 font-bold rounded-2xl resize-none w-full"
               ></textarea>
             </div>
-            <div className="grid lg:grid-cols-2 xs:grid-cols-1 md:grid-cols-1">
+            <div className="grid lg:grid-cols-2 xs:grid-cols-1 md:grid-cols-1 pb-10">
               <div className="pt-2 pl-3 text-sm">
                 <p>
                   ! All the fields are required. By sending the form you agree
@@ -137,9 +137,9 @@ const Contact = () => {
         {isVisible && (
           <button
             onClick={scrollToTop}
+            aria-label="Scroll to top"
             className="fixed bottom-4 right-4 p-3 text-black rounded-full shadow-lg bg-transparent transition duration-300"
           >
-            |
             <ChevronUp className="w-6 h-6 text-white hover:animate-bounce" />
           </button>
         )}

@@ -1,4 +1,6 @@
 import Container from "./container";
+import FlippingText from "./FlippingText";
+
 import Project1 from "../assets/download.png";
 import Game from "../assets/download.png";
 import Project2 from "../assets/download (2).jpeg";
@@ -7,23 +9,52 @@ import Project4 from "../assets/download (4).jpeg";
 import Project5 from "../assets/download (5).jpeg";
 import Project6 from "../assets/download (6).jpeg";
 
-import FlippingText from "./FlippingText";
-
 const projects = [
   {
     id: 1,
     imgSrc: Project1,
     label: "Game Hub",
-    alt: "project1",
+    alt: "Screenshot of Game Hub project",
     href: "https://game-hub-bay-eta.vercel.app",
   },
-  { id: 2, imgSrc: Project2, label: "Project 2", alt: "project2", href: "#" },
-  { id: 3, imgSrc: Project3, label: "Project 3", alt: "project3", href: "#" },
-  { id: 4, imgSrc: Project4, label: "Project 4", alt: "project4", href: "#" },
-  { id: 5, imgSrc: Project5, label: "Project 5", alt: "project5", href: "#" },
-  { id: 6, imgSrc: Project6, label: "Project 6", alt: "project6", href: "#" },
+  {
+    id: 2,
+    imgSrc: Project2,
+    label: "Project 2",
+    alt: "Screenshot of Project 2",
+    href: "#",
+  },
+  {
+    id: 3,
+    imgSrc: Project3,
+    label: "Project 3",
+    alt: "Screenshot of Project 3",
+    href: "#",
+  },
+  {
+    id: 4,
+    imgSrc: Project4,
+    label: "Project 4",
+    alt: "Screenshot of Project 4",
+    href: "#",
+  },
+  {
+    id: 5,
+    imgSrc: Project5,
+    label: "Project 5",
+    alt: "Screenshot of Project 5",
+    href: "#",
+  },
+  {
+    id: 6,
+    imgSrc: Project6,
+    label: "Project 6",
+    alt: "Screenshot of Project 6",
+    href: "#",
+  },
 ];
-const optn = [
+
+const options = [
   { id: 1, option: "All Projects" },
   { id: 2, option: "Recent Projects" },
   { id: 3, option: "Layout Projects" },
@@ -31,77 +62,84 @@ const optn = [
 
 const MyWork = () => {
   return (
-    <section id="work">
-      <div className=" bg-black text-white pt-20">
-        <Container>
-          <div className="relative mb-8 flex justify-between">
-            <h2 className="absolute -top-5 text-5xl xs:text-3xl uppercase font-bold text-outline">
-              My work
-            </h2>
-
-            <h2 className="text-5xl xs:text-3xl font-bold relative uppercase">
-              my work
-            </h2>
-            <p className="border-b hidden xs:block md:hidden lg:block border-white text-xl w-fit">
-              Get in Touch
-            </p>
-          </div>
-          {optn.map((optn) => (
-            <FlippingText option={optn.option} key={optn.id} id={optn.id} />
-          ))}
-        </Container>
-
-        <div>
-          <Container>
-            <div className="grid lg:grid-cols-3 xs:grid-cols-1 md:grid-cols-2 xs:p-0 pt-20 gap-10">
-              {projects.map((project) => (
-                <div key={project.id}>
-                  <img
-                    src={project.imgSrc}
-                    alt={project.alt}
-                    className="mt-5 mx-auto"
-                  />
-                  <p className="font-bold text-xl text-center">
-                    <a href={project.href} target="__blank">
-                      {project.label}
-                    </a>
-                  </p>
-                </div>
-              ))}
-            </div>
-            <div className="relative flex justify-between ">
-              <h2 className="absolute -top-5 text-5xl uppercase border-b-2 pb-10 border-white pt-20 font-bold text-outline">
-                Client Stories
-              </h2>
-              <h2 className="text-5xl font-bold pt-20 relative uppercase">
-                client stories
-              </h2>
-            </div>
-          </Container>
+    <section id="work" className="bg-black text-white pt-20">
+      <Container>
+        {/* Section Title */}
+        <div className="relative mb-8 flex justify-between items-center">
+          <h2 className="absolute -top-5 text-5xl uppercase font-bold text-outline">
+            My Work
+          </h2>
+          <h2 className="text-5xl font-bold relative uppercase">My Work</h2>
+          <p className="border-b hidden sm:block border-white text-xl w-fit cursor-pointer hover:opacity-70">
+            Get in Touch
+          </p>
         </div>
-        <Container className="pt-10 xs:pt-20 md:pt-20 lg:pt-20">
-          <div className="grid lg:grid-cols-2 xs:grid-col-1 md:grid-cols-1">
-            <div>
-              <h1 className="text-4xl pt-10 xs:pt-20 font-bold">Umer </h1>
-              <p className="  pt-5 lg:text-2xl xs:text-sm md:text-sm w-fit">
-                "Working on this project was an excellent journey from start to
-                finish. The design came out clean, modern, and perfectly aligned
-                with our vision. Every detail was carefully crafted to ensure
-                responsiveness across devices, and the performance is
-                impressively smooth. The communication throughout the process
-                was clear, making it easy to share feedback and see improvements
-                right away. Overall, the project has elevated our brand’s online
-                presence and left us extremely satisfied with the results.""
+
+        {/* Project Options */}
+        <div className="hidden md:flex gap-5 flex-wrap">
+          {options.map((opt) => (
+            <FlippingText option={opt.option} id={opt.id} key={opt.id} />
+          ))}
+        </div>
+      </Container>
+
+      {/* Projects Section */}
+      <Container>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 pt-20 gap-10">
+          {projects.map((project) => (
+            <div key={project.id}>
+              <img
+                src={project.imgSrc}
+                alt={project.alt}
+                className="mt-5 mx-auto rounded-2xl shadow-lg hover:scale-105 transition-transform duration-300"
+              />
+              <p className="font-bold text-xl text-center mt-2">
+                <a
+                  href={project.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {project.label}
+                </a>
               </p>
             </div>
-            <img
-              src={Game}
-              alt="image"
-              className="lg:w-xl xs:w-fit mx-auto md:pt-5"
-            />
+          ))}
+        </div>
+
+        {/* Client Stories Section */}
+        <div className="relative flex justify-between mt-20">
+          <h2 className="absolute -top-5 text-5xl uppercase border-b-2 pb-10 border-white font-bold text-outline">
+            Client Stories
+          </h2>
+          <h2 className="text-5xl font-bold relative uppercase">
+            Client Stories
+          </h2>
+        </div>
+      </Container>
+
+      {/* Testimonial */}
+      <Container className="pt-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mt-10 items-center">
+          <div>
+            <h1 className="text-4xl font-bold">Umer</h1>
+            <p className="pt-5 text-base lg:text-2xl leading-relaxed">
+              "Working on this project was an excellent journey from start to
+              finish. The design came out clean, modern, and perfectly aligned
+              with our vision. Every detail was carefully crafted to ensure
+              responsiveness across devices, and the performance is impressively
+              smooth. The communication throughout the process was clear, making
+              it easy to share feedback and see improvements right away.
+              Overall, the project has elevated our brand’s online presence and
+              left us extremely satisfied with the results."
+            </p>
           </div>
-        </Container>
-      </div>
+          <img
+            src={Game}
+            alt="Screenshot of client project"
+            className="mx-auto w-full max-w-md rounded-2xl shadow-lg"
+          />
+        </div>
+      </Container>
     </section>
   );
 };
