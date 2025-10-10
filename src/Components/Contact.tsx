@@ -2,6 +2,7 @@ import { ChevronUp } from "lucide-react";
 import Container from "./container";
 import { useEffect, useState, useRef } from "react";
 import emailjs from "@emailjs/browser";
+import Navbar from "./NavBar";
 
 const Contact = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -53,6 +54,7 @@ const Contact = () => {
 
   return (
     <div className="bg-black text-white">
+      <Navbar />
       <Container>
         <div className="relative flex justify-between">
           <h2 className="absolute -top-3 xs:-top-5 md:-top-5 lg:-top-5 text-3xl xs:text-5xl md:text-4xl lg:text-5xl uppercase pt-20 border-b-2 pb-5 border-white font-bold text-outline">

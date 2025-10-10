@@ -4,35 +4,31 @@ import Experience from "./Components/Experience";
 import Landing from "./Components/Landing";
 import Services from "./Components/Services";
 import MyWork from "./Components/myWork";
-import NavBar from "./Components/NavBar";
 import Contact from "./Components/Contact";
-import Footer from "./Components/Footer";
+import Blog from "./Components/Blog";
+import Home from "./Components/Home";
+import Navbar from "./Components/NavBar";
 
 function App() {
   return (
     <>
-      <NavBar />
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route
-          path="/"
+          path="/about"
           element={
             <>
-              <Landing />
-              <Experience />
+              <Navbar classes={{ root: "bg-black" }} />
               <About />
-              <Services />
-              <MyWork />
-              <Contact />
-              <Footer />
             </>
           }
         />
-        <Route path="/about" element={<About />} />
-        <Route path="/home" element={<Landing />} />
+        <Route path="/" element={<Landing />} />
         <Route path="/services" element={<Services />} />
         <Route path="/work" element={<MyWork />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/experience" element={<Experience />} />
+        <Route path="/blog" element={<Blog />} />
       </Routes>
     </>
   );
