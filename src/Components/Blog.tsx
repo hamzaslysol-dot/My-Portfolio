@@ -18,9 +18,9 @@ const Blog = () => {
       <div className="absolute inset-0 bg-black/50 z-0"></div>
 
       <Container className="relative z-10 py-10">
-        <h1 className="font-bold text-5xl mb-10 text-center">Blogs</h1>
+        <h1 className="font-bold text-5xl mb-10">Blogs</h1>
 
-        <div className="grid md:grid-cols-2 gap-5">
+        <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2  gap-5">
           {BlogView.map((blog) => (
             <div
               key={blog.id}
@@ -29,9 +29,9 @@ const Blog = () => {
               <img
                 src={blog.imgSrc}
                 alt={blog.alt}
-                className="w-full h-96 rounded-3xl mb-5 hover:scale-105 transition-transform duration-300"
+                className="w-full h-96 sm:h-auto sm:w-auto rounded-3xl mb-5 hover:scale-105 transition-transform duration-300"
               />
-              <p className="text-4xl font-bold mb-2">{blog.title}</p>
+              <p className="text-4xl font-bold mb-2">{blog.title} </p>
               <p className="text-gray-300 mb-2">
                 {blog.des.length > 150
                   ? blog.des.slice(0, 150) + "..."

@@ -29,16 +29,13 @@ const SingleBlog = () => {
             className="w-full h-96 rounded-3xl mb-5 object-cover"
           />
           <h1 className="text-5xl font-bold mb-3">{blog.title}</h1>
-          <p className="text-gray-400 mb-6">
-            By {blog.name} — {blog.date}
+          <p className="text-gray-400 flex gap-5 mb-6">
+            By: {blog.name} - Date:{blog.date}
           </p>
           <p className="text-lg leading-relaxed">{blog.fullDes || blog.des}</p>
 
-          <Link
-            to="/"
-            className="block mt-8 text-blue-400 hover:text-blue-300 underline"
-          >
-            ← Back to Blogs
+          <Link to="/blog" className="block mt-8 text-2xl hover:text-blue-300">
+            ← Back
           </Link>
         </div>
       </Container>
