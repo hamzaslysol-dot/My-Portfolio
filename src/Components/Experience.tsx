@@ -1,5 +1,4 @@
 import Container from "./container";
-import Navbar from "./NavBar";
 
 const exp = [
   { id: 1, heading: "15+", detail: "Years of Experience" },
@@ -11,7 +10,6 @@ const exp = [
 const Experience = () => {
   return (
     <div className="bg-black">
-      <Navbar />
       <section className="bg-black text-white py-20">
         {/* Intro text */}
         <Container>

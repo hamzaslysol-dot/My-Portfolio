@@ -1,12 +1,10 @@
 import Container from "./container";
-import Navbar from "./NavBar";
 
 const Services = () => {
   return (
     <>
       <section id="services">
         <div className="bg-black">
-          <Navbar />
           <div className="relative bg-black pt-20 p-0 xs:p-20">
             <Container className=" flex justify-between">
               <div className="relative mb-8">

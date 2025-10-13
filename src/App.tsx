@@ -8,6 +8,7 @@ import Contact from "./Components/Contact";
 import Blog from "./Components/Blog";
 import Home from "./Components/Home";
 import Navbar from "./Components/NavBar";
+import SingleBlog from "./Components/SingleBlog";
 
 function App() {
   return (
@@ -17,18 +18,59 @@ function App() {
         <Route
           path="/about"
           element={
-            <>
+            <div>
               <Navbar classes={{ root: "bg-black" }} />
               <About />
-            </>
+            </div>
           }
         />
         <Route path="/" element={<Landing />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/work" element={<MyWork />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/experience" element={<Experience />} />
-        <Route path="/blog" element={<Blog />} />
+        <Route
+          path="/services"
+          element={
+            <div>
+              <Navbar classes={{ root: "bg-black" }} />
+              <Services />
+            </div>
+          }
+        />
+        <Route
+          path="/work"
+          element={
+            <div>
+              <Navbar classes={{ root: "bg-black" }} />
+              <MyWork />
+            </div>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <div>
+              <Navbar classes={{ root: "bg-black" }} />
+              <Contact />
+            </div>
+          }
+        />
+        <Route
+          path="/experience"
+          element={
+            <div>
+              <Navbar classes={{ root: "bg-black" }} />
+              <Experience />
+            </div>
+          }
+        />
+        <Route
+          path="/blog"
+          element={
+            <div>
+              <Navbar classes={{ root: "bg-black" }} />
+              <Blog />
+            </div>
+          }
+        />
+        <Route path="/blog/:id" element={<SingleBlog />} />
       </Routes>
     </>
   );

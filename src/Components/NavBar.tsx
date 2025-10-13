@@ -6,9 +6,9 @@ import Container from "./container";
 
 const links = [
   { ref: "/", text: "Home" },
+  { ref: "/experience", text: "Experience" },
   { ref: "/about", text: "About" },
   { ref: "/services", text: "Services" },
-  { ref: "/experience", text: "Experience" },
   { ref: "/work", text: "Work" },
   { ref: "/contact", text: "Contact" },
   { ref: "/blog", text: "Blog" },
