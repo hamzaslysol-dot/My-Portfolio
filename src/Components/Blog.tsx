@@ -29,7 +29,7 @@ const Blog = () => {
               <img
                 src={blog.imgSrc}
                 alt={blog.alt}
-                className="w-full h-96 sm:h-auto sm:w-auto rounded-3xl mb-5 hover:scale-105 transition-transform duration-300"
+                className="w-full h-96 rounded-3xl mb-5 hover:scale-105 transition-transform duration-300"
               />
               <p className="text-4xl font-bold mb-2">{blog.title} </p>
               <p className="text-gray-300 mb-2">
