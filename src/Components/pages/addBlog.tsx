@@ -1,76 +1,62 @@
-// src/components/AddBlogForm.tsx
+// src/Components/pages/addBlog.tsx
 import { useState } from "react";
 
 export default function AddBlogForm() {
-  const [form, setForm] = useState({
-    author_name: "",
-    title: "",
-    description: "",
-    image: null as File | null,
-  });
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setForm({ ...form, image: e.target.files[0] });
-    }
-  };
+  const [title, setTitle] = useState("");
+  const [author_name, setAuthor] = useState("");
+  const [description, setDescription] = useState("");
+  const [image, setImage] = useState<File | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("author_name", form.author_name);
-    formData.append("title", form.title);
-    formData.append("description", form.description);
-    if (form.image) formData.append("image", form.image);
 
-    await fetch("http://localhost:8000/api/blogs/add", {
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("author_name", author_name);
+    formData.append("description", description);
+    if (image) formData.append("image", image);
+
+    const res = await fetch("http://localhost:8000/api/blogs", {
       method: "POST",
       body: formData,
     });
 
-    alert("✅ Blog added!");
-    setForm({ author_name: "", title: "", description: "", image: null });
+    const data = await res.json();
+    alert(data.message);
   };
 
   return (
-    <div className="max-w-lg mx-auto bg-white shadow-md p-6 rounded-lg">
-      <h2 className="text-2xl font-bold mb-4">Add a New Blog</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <div className="max-w-xl mx-auto mt-10 p-6 text-black bg-gray-300 shadow-md rounded">
+      <h2 className="text-2xl font-bold mb-4">Add New Blog</h2>
+      <form onSubmit={handleSubmit} className="space-y-3">
         <input
-          name="author_name"
-          value={form.author_name}
-          onChange={handleChange}
+          type="text"
           placeholder="Author Name"
-          className="border p-2 rounded"
-          required
+          className="w-full p-2 border rounded"
+          value={author_name}
+          onChange={(e) => setAuthor(e.target.value)}
         />
         <input
-          name="title"
-          value={form.title}
-          onChange={handleChange}
-          placeholder="Blog Title"
-          className="border p-2 rounded"
-          required
+          type="text"
+          placeholder="Title"
+          className="w-full p-2 border rounded"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
         <textarea
-          name="description"
-          value={form.description}
-          onChange={handleChange}
           placeholder="Description"
-          rows={6}
-          className="border p-2 rounded"
-          required
+          className="w-full p-2 border rounded"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
-        <input type="file" accept="image/*" onChange={handleFileChange} />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setImage(e.target.files?.[0] || null)}
+        />
         <button
           type="submit"
-          className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+          className="bg-blue-200 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
           Add Blog
         </button>

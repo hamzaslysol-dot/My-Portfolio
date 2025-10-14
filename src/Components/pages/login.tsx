@@ -1,27 +1,43 @@
-import Sidebar from "../sideBar";
+import { useOutletContext, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
-export default function Login() {
+export default function LoginPage() {
+  const navigate = useNavigate();
+  const { setIsLoggedIn }: any = useOutletContext();
+  const [password, setPassword] = useState("");
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === "admin123") {
+      localStorage.setItem("isLoggedIn", "true");
+      setIsLoggedIn(true);
+      navigate("/dashboard/add");
+    } else {
+      alert("Incorrect password!");
+    }
+  };
+
   return (
-    <div className="flex">
-      <Sidebar />
-      <div className="flex-1 ml-64 flex items-center justify-center h-screen">
-        <form className="bg-gray-100 p-6 rounded-lg shadow w-80">
-          <h1 className="text-2xl font-bold mb-4 text-center">🔐 Login</h1>
-          <input
-            type="text"
-            placeholder="Username"
-            className="w-full p-2 border rounded mb-3"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full p-2 border rounded mb-4"
-          />
-          <button className="bg-blue-600 text-white w-full py-2 rounded hover:bg-blue-700">
-            Login
-          </button>
-        </form>
-      </div>
+    <div className="flex justify-center items-center min-h-screen bg-black text-white">
+      <form
+        onSubmit={handleLogin}
+        className="bg-gray-900 p-6 rounded-lg shadow-md w-80"
+      >
+        <h2 className="text-2xl font-bold mb-4 text-center">Admin Login</h2>
+        <input
+          type="password"
+          placeholder="Enter Password"
+          className="w-full p-2 mb-4 rounded bg-gray-700 text-white border border-gray-600"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button
+          type="submit"
+          className="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded"
+        >
+          Login
+        </button>
+      </form>
     </div>
   );
 }

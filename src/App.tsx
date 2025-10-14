@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 
 // Portfolio components
 import Home from "./Components/Home";
@@ -11,22 +11,22 @@ import Contact from "./Components/Contact";
 import Navbar from "./Components/NavBar";
 
 // Blog system components
-import BlogList from "./Components/pages/blogList";
 import BlogDetail from "./Components/pages/blogDetail";
-import Dashboard from "./Components/pages/dashboard";
-import DashboardHome from "./Components/pages/dashboardHome";
+import DashboardLayout from "./Components/pages/dashboardLayout";
 import AddBlogForm from "./Components/pages/addBlog";
 import ManageBlogs from "./Components/pages/manageBlog";
+import LoginPage from "./Components/pages/login";
 
 function App() {
   const location = useLocation();
 
-  // ✅ Hide Navbar on dashboard routes
+  // ✅ Hide Navbar ONLY on dashboard routes
   const hideNavbar =
     location.pathname.startsWith("/dashboard") || location.pathname === "/";
+
   return (
     <>
-      {/* Show navbar only on non-dashboard routes */}
+      {/* Show navbar only on non-dashboard pages */}
       {!hideNavbar && <Navbar classes={{ root: "bg-black" }} />}
 
       <Routes>
@@ -39,22 +39,22 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/experience" element={<Experience />} />
 
-        {/* 📰 Blog routes */}
-        <Route path="/blogs" element={<BlogList />} />
+        {/* 📖 Blog Public Routes */}
         <Route path="/blog/:id" element={<BlogDetail />} />
 
-        {/* 🧭 Dashboard (no navbar) */}
-        <Route path="/dashboard" element={<Dashboard />}>
-          <Route index element={<DashboardHome />} />
-          <Route path="add" element={<AddBlogForm />} />
+        {/* 🧱 Dashboard Routes */}
+        <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route index element={<Navigate to="view" />} />
           <Route path="view" element={<ManageBlogs />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="add" element={<AddBlogForm />} />
         </Route>
 
-        {/* 🚫 404 fallback */}
+        {/* 🚫 404 Fallback */}
         <Route
           path="*"
           element={
-            <div className="text-center mt-10 text-2xl text-gray-600">
+            <div className="text-center mt-10 text-2xl text-gray-400">
               Page Not Found
             </div>
           }
