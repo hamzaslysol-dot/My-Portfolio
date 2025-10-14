@@ -102,7 +102,7 @@ const Blog = () => {
 
                 <Link
                   to={`/blog/${blog.id}`}
-                  className="text-blue-300 hover:underline"
+                  className="text-blue-600 hover:underline"
                 >
                   Read More →
                 </Link>
