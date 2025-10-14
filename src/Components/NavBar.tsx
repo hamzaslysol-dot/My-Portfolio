@@ -11,6 +11,7 @@ const links = [
   { ref: "/services", text: "Services" },
   { ref: "/work", text: "Work" },
   { ref: "/contact", text: "Contact" },
+  { ref: "/blog", text: "Blog" },
   { ref: "/dashboard", text: "Dashboard" },
 ];
 

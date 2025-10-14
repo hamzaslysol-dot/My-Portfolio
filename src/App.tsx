@@ -16,17 +16,15 @@ import DashboardLayout from "./Components/pages/dashboardLayout";
 import AddBlogForm from "./Components/pages/addBlog";
 import ManageBlogs from "./Components/pages/manageBlog";
 import LoginPage from "./Components/pages/login";
+import Blog from "./Components/blog";
 
 function App() {
   const location = useLocation();
-
-  // ✅ Hide Navbar ONLY on dashboard routes
   const hideNavbar =
     location.pathname.startsWith("/dashboard") || location.pathname === "/";
 
   return (
     <>
-      {/* Show navbar only on non-dashboard pages */}
       {!hideNavbar && <Navbar classes={{ root: "bg-black" }} />}
 
       <Routes>
@@ -38,6 +36,7 @@ function App() {
         <Route path="/work" element={<MyWork />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/experience" element={<Experience />} />
+        <Route path="/blog" element={<Blog />} />
 
         {/* 📖 Blog Public Routes */}
         <Route path="/blog/:id" element={<BlogDetail />} />
