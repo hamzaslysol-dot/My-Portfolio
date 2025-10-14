@@ -1,10 +1,8 @@
 // src/server.ts
 import express from "express";
 import cors from "cors";
-
-// ✅ Routes
-import blogRoutes from "./server/frontBack.ts";
-import setupBlogsTableRoutes from "./server/blog.ts";
+import blogRoutes from "./server/blogRoutes.ts";
+import setupBlogsTableRoutes from "./server/setupBlogsTableRoutes.ts";
 
 const app = express();
 app.use(cors());
