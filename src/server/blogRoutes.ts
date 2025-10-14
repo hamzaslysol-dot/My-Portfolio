@@ -1,44 +1,67 @@
-import express from "express";
-import { db } from "../db.ts";
-import { sql } from "drizzle-orm";
+import { Router } from "express";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+import { raw as db } from "../db.ts"; // ✅ use raw connection from mysql2/promise
 
-const router = express.Router();
+const router = Router();
 
-/**
- * ✅ GET blogs with pagination
- * Example: GET http://localhost:8000/api/blogs?page=1&limit=6
- */
-router.get("/", async (req, res) => {
-  const page = parseInt(req.query.page as string) || 1;
-  const limit = parseInt(req.query.limit as string) || 6;
-  const offset = (page - 1) * limit;
+// Ensure upload folder exists
+const uploadDir = path.join(process.cwd(), "uploads");
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
 
+const storage = multer.diskStorage({
+  destination: (_, __, cb) => cb(null, uploadDir),
+  filename: (_, file, cb) =>
+    cb(null, Date.now() + path.extname(file.originalname)),
+});
+const upload = multer({ storage });
+
+// ➕ CREATE Blog (with author, title, description, image)
+router.post("/", upload.single("image"), async (req, res) => {
   try {
-    // ✅ Fetch total number of blogs
-    const [countResult]: any = await db.execute(
-      sql`SELECT COUNT(*) AS count FROM blogs;`
-    );
-    const total = Array.isArray(countResult) ? countResult[0]?.count : 0;
+    const { title, author, description, content } = req.body;
+    const image = req.file ? `/uploads/${req.file.filename}` : null;
 
-    // ✅ Fetch blogs for current page
+    const [result]: any = await db.execute(
+      "INSERT INTO blogs (title, author, description, content, image, created_at) VALUES (?, ?, ?, ?, ?, NOW())",
+      [title, author, description, content, image]
+    );
+
+    const insertedId = result.insertId;
+    const [rows]: any = await db.execute("SELECT * FROM blogs WHERE id = ?", [
+      insertedId,
+    ]);
+
+    res.status(201).json(rows[0]);
+  } catch (error) {
+    console.error("Error adding blog:", error);
+    res.status(500).json({ error: "Failed to add blog" });
+  }
+});
+
+// 📄 READ all blogs
+router.get("/", async (_, res) => {
+  try {
     const [rows]: any = await db.execute(
-      sql.raw(
-        `SELECT * FROM blogs ORDER BY date DESC LIMIT ${limit} OFFSET ${offset}`
-      )
+      "SELECT * FROM blogs ORDER BY created_at DESC"
     );
+    res.json(rows);
+  } catch (error) {
+    console.error("Error fetching blogs:", error);
+    res.status(500).json({ error: "Failed to fetch blogs" });
+  }
+});
 
-    res.json({
-      data: rows,
-      pagination: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
-    });
-  } catch (error: any) {
-    console.error("❌ Error fetching blogs:", error);
-    res.status(500).json({ error: error.message });
+// 🗑️ DELETE blog by ID
+router.delete("/:id", async (req, res) => {
+  try {
+    const blogId = Number(req.params.id);
+    await db.execute("DELETE FROM blogs WHERE id = ?", [blogId]);
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting blog:", error);
+    res.status(500).json({ error: "Failed to delete blog" });
   }
 });
 
