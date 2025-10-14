@@ -5,10 +5,10 @@ import Landing from "./Components/Landing";
 import Services from "./Components/Services";
 import MyWork from "./Components/myWork";
 import Contact from "./Components/Contact";
-import Blog from "./Components/Blog";
+import Blog from "./Components/blog";
 import Home from "./Components/Home";
 import Navbar from "./Components/NavBar";
-import SingleBlog from "./Components/SingleBlog";
+// import SingleBlog from "./Components/SingleBlog";
 
 function App() {
   return (
@@ -70,7 +70,7 @@ function App() {
             </div>
           }
         />
-        <Route path="/blog/:id" element={<SingleBlog />} />
+        {/* <Route path="/blog/:id" element={<SingleBlog />} /> */}
       </Routes>
     </>
   );

@@ -7,11 +7,13 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "ts-node --esm src/server.ts"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
     "@tailwindcss/vite": "^4.1.13",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.6",
     "express": "^5.1.0",
@@ -27,7 +29,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/node": "^24.7.2",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
     "@types/react-router-dom": "^5.3.3",
