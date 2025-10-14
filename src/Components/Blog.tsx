@@ -99,11 +99,12 @@ const Blog = () => {
                     ? blog.description.slice(0, 150) + "..."
                     : blog.description}
                 </p>
+
                 <Link
                   to={`/blog/${blog.id}`}
-                  className="hover:text-blue-300 underline text-sm"
+                  className="text-blue-300 hover:underline"
                 >
-                  Read more →
+                  Read More →
                 </Link>
               </div>
             ))}

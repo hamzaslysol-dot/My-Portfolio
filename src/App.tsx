@@ -8,7 +8,7 @@ import Contact from "./Components/Contact";
 import Blog from "./Components/blog";
 import Home from "./Components/Home";
 import Navbar from "./Components/NavBar";
-// import SingleBlog from "./Components/SingleBlog";
+import BlogDetail from "./Components/blogDetail";
 
 function App() {
   return (
@@ -70,7 +70,8 @@ function App() {
             </div>
           }
         />
-        {/* <Route path="/blog/:id" element={<SingleBlog />} /> */}
+
+        <Route path="/blog/:id" element={<BlogDetail />} />
       </Routes>
     </>
   );
