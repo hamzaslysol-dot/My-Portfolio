@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Container from "./container";
 import Pagination from "./pagenation";
+import Bg from "../assets/bg.mp4";
 
 interface BlogItem {
   id: number;
@@ -59,6 +60,16 @@ const Blog = () => {
 
   return (
     <div className="relative min-h-screen text-white overflow-hidden">
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute top-0 left-0 w-full h-full object-cover z-[-1]"
+      >
+        {" "}
+        <source src={Bg} type="video/mp4" />{" "}
+      </video>
       <div className="absolute inset-0 bg-black/50 z-0"></div>
 
       <Container className="relative z-10 py-10">
