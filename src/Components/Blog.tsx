@@ -67,8 +67,7 @@ const Blog = () => {
         playsInline
         className="absolute top-0 left-0 w-full h-full object-cover z-[-1]"
       >
-        {" "}
-        <source src={Bg} type="video/mp4" />{" "}
+        <source src={Bg} type="video/mp4" />
       </video>
       <div className="absolute inset-0 bg-black/50 z-0"></div>
 
@@ -91,7 +90,7 @@ const Blog = () => {
                 />
                 <p className="text-2xl font-bold mb-2">{blog.title}</p>
                 <p className="text-sm text-gray-400 mb-2">
-                  By {blog.author_name} —{" "}
+                  By {blog.author_name} Date: 
                   {new Date(blog.date).toLocaleDateString()}
                 </p>
                 <p className="text-gray-300 mb-2">

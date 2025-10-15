@@ -42,32 +42,24 @@ const AddBlogForm = () => {
       <form onSubmit={handleSubmit} className="space-y-3">
         <input
           type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Blog title"
-          className="w-full border rounded p-2"
-          required
-        />
-        <input
-          type="text"
           value={author}
           onChange={(e) => setAuthor(e.target.value)}
           placeholder="Author name"
           className="w-full border rounded p-2"
           required
         />
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Short description"
-          rows={2}
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Blog title"
           className="w-full border rounded p-2"
           required
         />
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          placeholder="Full blog content"
+          placeholder="Description"
           rows={5}
           className="w-full border rounded p-2"
           required
@@ -79,7 +71,7 @@ const AddBlogForm = () => {
         />
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-blue-300 text-white px-4 py-2 rounded hover:bg-blue-500"
         >
           Add Blog
         </button>
