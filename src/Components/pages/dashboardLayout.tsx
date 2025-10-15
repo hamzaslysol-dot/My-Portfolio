@@ -7,7 +7,6 @@ import {
   LogOut,
   BookOpen,
 } from "lucide-react";
-import Blog from "../Blog";
 export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
