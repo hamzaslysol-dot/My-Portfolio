@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Container from "./container";
-import Pagination from "./pagenation";
+import Pagination from "./Pagenation";
 import Bg from "../assets/bg.mp4";
 
 interface BlogItem {
@@ -90,7 +90,7 @@ const Blog = () => {
                 />
                 <p className="text-2xl font-bold mb-2">{blog.title}</p>
                 <p className="text-sm text-gray-400 mb-2">
-                  By {blog.author_name} Date: 
+                  By {blog.author_name} Date:
                   {new Date(blog.date).toLocaleDateString()}
                 </p>
                 <p className="text-gray-300 mb-2">

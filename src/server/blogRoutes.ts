@@ -2,11 +2,11 @@ import { Router } from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { raw as db } from "../db.ts"; // ✅ using raw mysql2 connection
+import { raw as db } from "../db.ts"; // ✅ use raw MySQL connection
 
 const router = Router();
 
-// ✅ Ensure upload folder exists
+// ✅ Ensure uploads folder exists
 const uploadDir = path.join(process.cwd(), "uploads");
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
 
@@ -17,17 +17,15 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-/* -------------------------------------------------------------------------- */
-/* 🆕 CREATE Blog */
-/* -------------------------------------------------------------------------- */
+/* -------------------- ADD NEW BLOG -------------------- */
 router.post("/", upload.single("image"), async (req, res) => {
   try {
-    const { title, author, description, content } = req.body;
+    const { title, author, description } = req.body;
     const image = req.file ? `/uploads/${req.file.filename}` : null;
 
     const [result]: any = await db.execute(
-      "INSERT INTO blogs (title, author, description, content, image, created_at) VALUES (?, ?, ?, ?, ?, NOW())",
-      [title, author, description, content, image]
+      "INSERT INTO blogs (title, author, description, image, created_at) VALUES (?, ?, ?, ?, NOW())",
+      [title, author, description, image]
     );
 
     const insertedId = result.insertId;
@@ -37,14 +35,12 @@ router.post("/", upload.single("image"), async (req, res) => {
 
     res.status(201).json(rows[0]);
   } catch (error) {
-    console.error("Error adding blog:", error);
+    console.error("❌ Error adding blog:", error);
     res.status(500).json({ error: "Failed to add blog" });
   }
 });
 
-/* -------------------------------------------------------------------------- */
-/* 📄 READ all blogs */
-/* -------------------------------------------------------------------------- */
+/* -------------------- GET ALL BLOGS -------------------- */
 router.get("/", async (_, res) => {
   try {
     const [rows]: any = await db.execute(`
@@ -60,14 +56,12 @@ router.get("/", async (_, res) => {
     `);
     res.json(rows);
   } catch (error) {
-    console.error("Error fetching blogs:", error);
+    console.error("❌ Error fetching blogs:", error);
     res.status(500).json({ error: "Failed to fetch blogs" });
   }
 });
 
-/* -------------------------------------------------------------------------- */
-/* 📖 READ single blog by ID */
-/* -------------------------------------------------------------------------- */
+/* -------------------- GET SINGLE BLOG -------------------- */
 router.get("/:id", async (req, res) => {
   try {
     const blogId = Number(req.params.id);
@@ -87,64 +81,24 @@ router.get("/:id", async (req, res) => {
       [blogId]
     );
 
-    if (rows.length === 0) {
+    if (rows.length === 0)
       return res.status(404).json({ error: "Blog not found" });
-    }
 
     res.json(rows[0]);
   } catch (error) {
-    console.error("Error fetching single blog:", error);
+    console.error("❌ Error fetching single blog:", error);
     res.status(500).json({ error: "Failed to fetch blog" });
   }
 });
 
-/* -------------------------------------------------------------------------- */
-/* ✏️ UPDATE blog by ID */
-/* -------------------------------------------------------------------------- */
-router.put("/:id", upload.single("image"), async (req, res) => {
-  try {
-    const blogId = Number(req.params.id);
-    const { title, author, description, content } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : null;
-
-    const query = `
-      UPDATE blogs
-      SET title = ?, author = ?, description = ?, content = ?, 
-          image = COALESCE(?, image)
-      WHERE id = ?
-    `;
-
-    await db.execute(query, [
-      title,
-      author,
-      description,
-      content,
-      image,
-      blogId,
-    ]);
-
-    const [updatedRows]: any = await db.execute(
-      "SELECT * FROM blogs WHERE id = ?",
-      [blogId]
-    );
-
-    res.json(updatedRows[0]);
-  } catch (error) {
-    console.error("Error updating blog:", error);
-    res.status(500).json({ error: "Failed to update blog" });
-  }
-});
-
-/* -------------------------------------------------------------------------- */
-/* 🗑️ DELETE blog by ID */
-/* -------------------------------------------------------------------------- */
+/* -------------------- DELETE BLOG -------------------- */
 router.delete("/:id", async (req, res) => {
   try {
     const blogId = Number(req.params.id);
     await db.execute("DELETE FROM blogs WHERE id = ?", [blogId]);
     res.json({ success: true });
   } catch (error) {
-    console.error("Error deleting blog:", error);
+    console.error("❌ Error deleting blog:", error);
     res.status(500).json({ error: "Failed to delete blog" });
   }
 });

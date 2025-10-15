@@ -1,19 +1,19 @@
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
-import Home from "./Components/Home";
-import About from "./Components/About";
-import Experience from "./Components/Experience";
-import Landing from "./Components/Landing";
-import Services from "./Components/Services";
-import MyWork from "./Components/myWork";
-import Contact from "./Components/Contact";
-import Navbar from "./Components/NavBar";
-import BlogDetail from "./Components/pages/blogDetail";
-import DashboardLayout from "./Components/pages/dashboardLayout";
-import AddBlogForm from "./Components/pages/addBlog";
-import ManageBlogs from "./Components/pages/manageBlog";
-import LoginPage from "./Components/pages/login";
-import Blog from "./Components/blog";
+import Home from "./components/Home";
+import About from "./components/About";
+import Experience from "./components/Experience";
+import Landing from "./components/Landing";
+import Services from "./components/Services";
+import MyWork from "./components/myWork";
+import Contact from "./components/Contact";
+import Navbar from "./components/NavBar";
+import BlogDetail from "./components/pages/blogDetail";
+import DashboardLayout from "./components/pages/dashboardLayout";
+import ManageBlogs from "./components/pages/manageBlog";
+import LoginPage from "./components/pages/login";
 import React from "react";
+import Blog from "./components/Blog";
+import AddBlogForm from "./components/pages/AddBlog";
 
 function App() {
   const location = useLocation();
