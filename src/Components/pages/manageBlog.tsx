@@ -88,24 +88,12 @@ const ManageBlogs = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Manage Blogs</h1>
-      {/* ✅ Show Add Blog button for Admins */}
-      {isAdmin && (
-        <div className="flex justify-end mb-6">
-          <a
-            href="/dashboard/add"
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-          >
-            ➕ Add New Blog
-          </a>
-        </div>
-      )}
-
+      <h1 className="text-3xl font-bold mb-6">Edit Blogs</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {blogs.map((blog) => (
           <div
             key={blog.id}
-            className="p-4 border rounded-lg shadow bg-white space-y-2"
+            className="p-4 border rounded-lg shadow bg-gray-500 space-y-2"
           >
             <img
               src={blog.image}
@@ -142,7 +130,7 @@ const ManageBlogs = () => {
       {/* ✅ Edit modal */}
       {editingBlog && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-[500px]">
+          <div className="bg-gray-500 p-6 rounded-lg shadow-lg w-[500px]">
             <h2 className="text-2xl font-bold mb-4">Edit Blog</h2>
             <form onSubmit={handleUpdate} className="space-y-3">
               <input

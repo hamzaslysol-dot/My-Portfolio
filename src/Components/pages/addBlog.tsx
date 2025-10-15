@@ -37,8 +37,8 @@ const AddBlogForm = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto bg-white p-6 rounded shadow">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800">Add New Blog</h2>
+    <div className="max-w-xl mx-auto bg-black p-6 rounded shadow">
+      <h2 className="text-2xl font-bold mb-4 text-gray-400">Add New Blog</h2>
       <form onSubmit={handleSubmit} className="space-y-3">
         <input
           type="text"

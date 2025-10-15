@@ -78,7 +78,7 @@ const LoginPage = () => {
           {localStorage.getItem("user") && (
             <button
               onClick={handleLogout}
-              className="mt-6 w-full bg-red-600 text-white py-2 rounded hover:bg-red-700"
+              className="mt-6 w-full bg-blue-400 text-white py-2 rounded hover:bg-blue-600"
             >
               Logout
             </button>
