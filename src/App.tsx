@@ -14,6 +14,7 @@ import LoginPage from "./components/pages/login";
 import React from "react";
 import Blog from "./components/Blog";
 import AddBlogForm from "./components/pages/addBlog";
+import EditBlog from "./components/pages/editBlog";
 
 function App() {
   const location = useLocation();
@@ -66,7 +67,10 @@ function App() {
           >
             <Route index element={<Navigate to="view" />} />
             <Route path="view" element={<ManageBlogs />} />
-            <Route path="add" element={<AddBlogForm />} />
+            <Route path="/dashboard/add" element={<AddBlogForm />} />
+
+            <Route path="/dashboard/manage" element={<ManageBlogs />} />
+            <Route path="/dashboard/edit/:id" element={<EditBlog />} />
           </Route>
         </Route>
 

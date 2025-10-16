@@ -1,206 +1,156 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 interface Blog {
   id: number;
   title: string;
-  author: string;
-  description: string;
-  content: string;
-  image: string;
-  created_at: string;
+  author_name: string;
+  image?: string;
+  date: string;
 }
 
-const ManageBlogs = () => {
+export default function ManageBlogs() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [editingBlog, setEditingBlog] = useState<Blog | null>(null);
-  const [formData, setFormData] = useState<FormData | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [search, setSearch] = useState<string>(""); // ✅ always defined
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  // ✅ check admin login status
+  // ✅ Fetch blogs on mount
   useEffect(() => {
-    const role = localStorage.getItem("role");
-    setIsAdmin(role === "admin");
-  }, []);
-
-  const fetchBlogs = async () => {
-    try {
-      const response = await axios.get("http://localhost:8000/api/blogs");
-      setBlogs(response.data);
-    } catch (error) {
-      console.error("Error fetching blogs:", error);
-    }
-  };
-
-  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const res = await axios.get("http://localhost:8000/api/blogs");
+        setBlogs(res.data);
+      } catch (err) {
+        console.error("❌ Error fetching blogs:", err);
+        setError("Failed to load blogs.");
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchBlogs();
   }, []);
 
-  const deleteBlog = async (id: number) => {
+  // ✅ Delete a blog
+  const handleDelete = async (id: number) => {
     if (!window.confirm("Are you sure you want to delete this blog?")) return;
     try {
       await axios.delete(`http://localhost:8000/api/blogs/${id}`);
-      setBlogs((prev) => prev.filter((b) => b.id !== id));
-    } catch (error) {
-      console.error("Error deleting blog:", error);
+      setBlogs((prev) => prev.filter((blog) => blog.id !== id));
+    } catch (err) {
+      console.error("❌ Error deleting blog:", err);
+      alert("Failed to delete blog.");
     }
   };
 
-  const handleEdit = (blog: Blog) => {
-    setEditingBlog(blog);
-  };
+  // ✅ Filter blogs by search
+  const filteredBlogs = blogs.filter(
+    (blog) =>
+      blog.title.toLowerCase().includes(search.toLowerCase()) ||
+      blog.author_name.toLowerCase().includes(search.toLowerCase())
+  );
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const fd = new FormData();
-      if (editingBlog) {
-        fd.append("title", editingBlog.title);
-        fd.append("author", editingBlog.author);
-        fd.append("description", editingBlog.description);
-        fd.append("content", editingBlog.content);
-      }
-      fd.append("image", e.target.files[0]);
-      setFormData(fd);
-    }
-  };
-
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingBlog) return;
-
-    const fd = formData || new FormData();
-    fd.set("title", editingBlog.title);
-    fd.set("author", editingBlog.author);
-    fd.set("description", editingBlog.description);
-    fd.set("content", editingBlog.content);
-
-    try {
-      await axios.put(`http://localhost:8000/api/blogs/${editingBlog.id}`, fd, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      alert("✅ Blog updated successfully!");
-      setEditingBlog(null);
-      fetchBlogs();
-    } catch (error) {
-      console.error("Error updating blog:", error);
-    }
-  };
+  if (loading)
+    return <p className="text-center text-gray-400 mt-10">Loading blogs...</p>;
+  if (error) return <p className="text-center text-red-500 mt-10">{error}</p>;
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Edit Blogs</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {blogs.map((blog) => (
-          <div
-            key={blog.id}
-            className="p-4 border rounded-lg shadow bg-gray-500 space-y-2"
+    <div className="bg-black min-h-screen text-white p-6">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+          <h1 className="text-3xl font-bold text-gray-200">📰 Manage Blogs</h1>
+          <button
+            onClick={() => navigate("/dashboard/add")}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-semibold transition"
           >
-            <img
-              src={blog.image}
-              alt={blog.title}
-              className="w-full h-48 object-cover rounded"
-            />
-            <h2 className="font-bold text-lg">{blog.title}</h2>
-            <p className="text-gray-600 text-sm">
-              By {blog.author} —{" "}
-              {new Date(blog.created_at).toLocaleDateString()}
-            </p>
-
-            {/* ✅ Only show to admin */}
-            {isAdmin && (
-              <div className="flex gap-3 mt-3">
-                <button
-                  onClick={() => handleEdit(blog)}
-                  className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => deleteBlog(blog.id)}
-                  className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
-                >
-                  Delete
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* ✅ Edit modal */}
-      {editingBlog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-gray-500 p-6 rounded-lg shadow-lg w-[500px]">
-            <h2 className="text-2xl font-bold mb-4">Edit Blog</h2>
-            <form onSubmit={handleUpdate} className="space-y-3">
-              <input
-                type="text"
-                value={editingBlog.title}
-                onChange={(e) =>
-                  setEditingBlog({ ...editingBlog, title: e.target.value })
-                }
-                placeholder="Title"
-                className="w-full border p-2 rounded"
-                required
-              />
-              <input
-                type="text"
-                value={editingBlog.author}
-                onChange={(e) =>
-                  setEditingBlog({ ...editingBlog, author: e.target.value })
-                }
-                placeholder="Author"
-                className="w-full border p-2 rounded"
-                required
-              />
-              <textarea
-                value={editingBlog.description}
-                onChange={(e) =>
-                  setEditingBlog({
-                    ...editingBlog,
-                    description: e.target.value,
-                  })
-                }
-                placeholder="Description"
-                rows={3}
-                className="w-full border p-2 rounded"
-              />
-              <textarea
-                value={editingBlog.content}
-                onChange={(e) =>
-                  setEditingBlog({ ...editingBlog, content: e.target.value })
-                }
-                placeholder="Content"
-                rows={5}
-                className="w-full border p-2 rounded"
-              />
-              <input
-                type="file"
-                onChange={handleFileChange}
-                className="w-full border p-2 rounded"
-              />
-
-              <div className="flex justify-end gap-3 mt-4">
-                <button
-                  type="button"
-                  onClick={() => setEditingBlog(null)}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </form>
-          </div>
+            ➕ Add New Blog
+          </button>
         </div>
-      )}
+
+        {/* Search Bar */}
+        <div className="mb-6">
+          <input
+            type="text"
+            placeholder="Search by title or author..."
+            value={search ?? ""} // ✅ Always controlled
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full sm:w-1/2 border border-gray-700 rounded-lg px-3 py-2 bg-gray-900 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          />
+        </div>
+
+        {/* Blog Table */}
+        <div className="overflow-x-auto border border-gray-800 rounded-lg">
+          <table className="w-full text-left border-collapse">
+            <thead className="bg-gray-900 text-gray-300">
+              <tr>
+                <th className="p-3">Image</th>
+                <th className="p-3">Title</th>
+                <th className="p-3">Author</th>
+                <th className="p-3">Date</th>
+                <th className="p-3 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredBlogs.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="text-center py-6 text-gray-400">
+                    No blogs found.
+                  </td>
+                </tr>
+              ) : (
+                filteredBlogs.map((blog) => (
+                  <tr
+                    key={blog.id}
+                    className="border-t border-gray-800 hover:bg-gray-900 transition"
+                  >
+                    <td className="p-3">
+                      {blog.image ? (
+                        <img
+                          src={blog.image}
+                          alt={blog.title}
+                          className="w-20 h-14 object-cover rounded-md border border-gray-700"
+                        />
+                      ) : (
+                        <div className="w-20 h-14 bg-gray-800 rounded-md flex items-center justify-center text-gray-500 text-sm">
+                          No Img
+                        </div>
+                      )}
+                    </td>
+                    <td className="p-3">{blog.title}</td>
+                    <td className="p-3">{blog.author_name}</td>
+                    <td className="p-3 text-gray-400">
+                      {new Date(blog.date).toLocaleDateString()}
+                    </td>
+                    <td className="p-3 text-center space-x-3">
+                      <button
+                        onClick={() => navigate(`/dashboard/edit/${blog.id}`)}
+                        className="text-blue-400 hover:text-blue-500 font-medium"
+                      >
+                        ✏️ Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(blog.id)}
+                        className="text-red-500 hover:text-red-600 font-medium"
+                      >
+                        🗑️ Delete
+                      </button>
+                      <button
+                        onClick={() => navigate(`/blog/${blog.id}`)}
+                        className="text-green-400 hover:text-green-500 font-medium"
+                      >
+                        🔍 View
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
-};
-
-export default ManageBlogs;
+}

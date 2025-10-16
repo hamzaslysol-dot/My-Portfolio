@@ -13,32 +13,34 @@ if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
 const storage = multer.diskStorage({
   destination: (_, __, cb) => cb(null, uploadDir),
   filename: (_, file, cb) =>
-    cb(null, Date.now() + path.extname(file.originalname)),
+    cb(null, `${Date.now()}${path.extname(file.originalname)}`),
 });
 const upload = multer({ storage });
 
 /* -------------------- ADD NEW BLOG -------------------- */
 router.post("/", upload.single("image"), async (req, res) => {
   try {
-    // ✅ Remove description, match your schema
     const { title = "", author = "", content = "" } = req.body;
     const image = req.file ? `/uploads/${req.file.filename}` : null;
 
-    // ✅ Validate inputs
     if (!title || !author || !content) {
       return res.status(400).json({ error: "All fields are required." });
     }
 
     const [result]: any = await db.execute(
-      "INSERT INTO blogs (title, author, content, image, created_at) VALUES (?, ?, ?, ?, NOW())",
-      [title, author, content, image ?? null]
+      `INSERT INTO blogs (title, author, content, image, created_at) 
+       VALUES (?, ?, ?, ?, NOW())`,
+      [title, author, content, image]
     );
 
     const [rows]: any = await db.execute("SELECT * FROM blogs WHERE id = ?", [
       result.insertId,
     ]);
 
-    res.status(201).json(rows[0]);
+    res.status(201).json({
+      ...rows[0],
+      image: rows[0].image ? `http://localhost:8000${rows[0].image}` : null,
+    });
   } catch (error) {
     console.error("❌ Error adding blog:", error);
     res.status(500).json({ error: "Failed to add blog" });
@@ -53,7 +55,7 @@ router.get("/", async (_, res) => {
         id,
         author AS author_name,
         title,
-        COALESCE(content, '') AS content,  -- ✅ ensures string, not null
+        COALESCE(content, '') AS content,
         CONCAT('http://localhost:8000', image) AS image,
         created_at AS date
       FROM blogs
@@ -76,7 +78,7 @@ router.get("/:id", async (req, res) => {
         id,
         author AS author_name,
         title,
-        COALESCE(content, '') AS content,  -- ✅ ensures string, not null
+        COALESCE(content, '') AS content,
         CONCAT('http://localhost:8000', image) AS image,
         created_at AS date
       FROM blogs
@@ -96,43 +98,65 @@ router.get("/:id", async (req, res) => {
 });
 
 /* -------------------- UPDATE BLOG -------------------- */
-// router.put("/:id", upload.single("image"), async (req, res) => {
-//   try {
-//     const blogId = Number(req.params.id);
-//     const { title = "", author = "", content = "" } = req.body;
-//     const image = req.file ? `/uploads/${req.file.filename}` : null;
+router.put("/:id", upload.single("image"), async (req, res) => {
+  try {
+    const blogId = Number(req.params.id);
+    const { title = "", author = "", content = "" } = req.body;
+    const image = req.file ? `/uploads/${req.file.filename}` : null;
 
-//     let query = "UPDATE blogs SET title = ?, author = ?, content = ?";
-//     const fields: any[] = [title, author, content];
+    // check if blog exists
+    const [existing]: any = await db.execute(
+      "SELECT * FROM blogs WHERE id = ?",
+      [blogId]
+    );
+    if (existing.length === 0)
+      return res.status(404).json({ error: "Blog not found" });
 
-//     if (image) {
-//       query += ", image = ?";
-//       fields.push(image);
-//     }
+    let query = "UPDATE blogs SET title = ?, author = ?, content = ?";
+    const fields: any[] = [title, author, content];
 
-//     query += " WHERE id = ?";
-//     fields.push(blogId);
+    if (image) {
+      query += ", image = ?";
+      fields.push(image);
+    }
 
-//     await db.execute(query, fields);
+    query += " WHERE id = ?";
+    fields.push(blogId);
 
-//     const [rows]: any = await db.execute("SELECT * FROM blogs WHERE id = ?", [
-//       blogId,
-//     ]);
+    await db.execute(query, fields);
 
-//     if (rows.length === 0)
-//       return res.status(404).json({ error: "Blog not found" });
+    const [rows]: any = await db.execute("SELECT * FROM blogs WHERE id = ?", [
+      blogId,
+    ]);
 
-//     res.json(rows[0]);
-//   } catch (error) {
-//     console.error("❌ Error updating blog:", error);
-//     res.status(500).json({ error: "Failed to update blog" });
-//   }
-// });
+    res.json({
+      ...rows[0],
+      image: rows[0].image ? `http://localhost:8000${rows[0].image}` : null,
+    });
+  } catch (error) {
+    console.error("❌ Error updating blog:", error);
+    res.status(500).json({ error: "Failed to update blog" });
+  }
+});
 
 /* -------------------- DELETE BLOG -------------------- */
 router.delete("/:id", async (req, res) => {
   try {
     const blogId = Number(req.params.id);
+    const [existing]: any = await db.execute(
+      "SELECT * FROM blogs WHERE id = ?",
+      [blogId]
+    );
+
+    if (existing.length === 0)
+      return res.status(404).json({ error: "Blog not found" });
+
+    // delete image file if exists
+    if (existing[0].image) {
+      const imgPath = path.join(process.cwd(), existing[0].image);
+      if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
+    }
+
     await db.execute("DELETE FROM blogs WHERE id = ?", [blogId]);
     res.json({ success: true });
   } catch (error) {
