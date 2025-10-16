@@ -2,11 +2,11 @@ import { Router } from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { raw as db } from "../db.ts"; // ✅ use raw MySQL connection
+import { raw as db } from "../db.ts"; // ✅ MySQL connection
 
 const router = Router();
 
-// ✅ Ensure uploads folder exists
+/* -------------------- SETUP MULTER -------------------- */
 const uploadDir = path.join(process.cwd(), "uploads");
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir);
 
@@ -20,17 +20,16 @@ const upload = multer({ storage });
 /* -------------------- ADD NEW BLOG -------------------- */
 router.post("/", upload.single("image"), async (req, res) => {
   try {
-    const { title, author, description } = req.body;
+    const { title, author, description, content } = req.body;
     const image = req.file ? `/uploads/${req.file.filename}` : null;
 
     const [result]: any = await db.execute(
-      "INSERT INTO blogs (title, author, description, image, created_at) VALUES (?, ?, ?, ?, NOW())",
-      [title, author, description, image]
+      "INSERT INTO blogs (title, author, description, content, image, created_at) VALUES (?, ?, ?, ?, ?, NOW())",
+      [title, author, description, content, image]
     );
 
-    const insertedId = result.insertId;
     const [rows]: any = await db.execute("SELECT * FROM blogs WHERE id = ?", [
-      insertedId,
+      result.insertId,
     ]);
 
     res.status(201).json(rows[0]);
@@ -91,6 +90,41 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+/* -------------------- UPDATE BLOG -------------------- */
+router.put("/:id", upload.single("image"), async (req, res) => {
+  try {
+    const blogId = Number(req.params.id);
+    const { title, author, description, content } = req.body;
+    const image = req.file ? `/uploads/${req.file.filename}` : null;
+
+    let query =
+      "UPDATE blogs SET title = ?, author = ?, description = ?, content = ?";
+    const fields: any[] = [title, author, description, content];
+
+    if (image) {
+      query += ", image = ?";
+      fields.push(image);
+    }
+
+    query += " WHERE id = ?";
+    fields.push(blogId);
+
+    await db.execute(query, fields);
+
+    const [rows]: any = await db.execute("SELECT * FROM blogs WHERE id = ?", [
+      blogId,
+    ]);
+
+    if (rows.length === 0)
+      return res.status(404).json({ error: "Blog not found" });
+
+    res.json(rows[0]);
+  } catch (error) {
+    console.error("❌ Error updating blog:", error);
+    res.status(500).json({ error: "Failed to update blog" });
+  }
+});
+
 /* -------------------- DELETE BLOG -------------------- */
 router.delete("/:id", async (req, res) => {
   try {
@@ -103,4 +137,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-export default router;
+export default router; // ✅ Now at the very end

@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Container from "./container";
-import Pagination from "./Pagenation";
 import Bg from "../assets/bg.mp4";
+import Pagination from "./pagenation";
 
 interface BlogItem {
   id: number;

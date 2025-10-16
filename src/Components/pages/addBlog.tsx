@@ -76,7 +76,7 @@ const AddBlogForm = () => {
           Add Blog
         </button>
       </form>
-      {message && <p className="mt-3 text-green-600">{message}</p>}
+      {message && <p className="mt-3 text-green-400">{message}</p>}
     </div>
   );
 };
