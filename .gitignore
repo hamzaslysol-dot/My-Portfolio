@@ -24,5 +24,5 @@ dist-ssr
 *.sw?
 
 .vercel
+/uploads
 .env
-.env.local

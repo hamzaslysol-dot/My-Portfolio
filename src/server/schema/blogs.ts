@@ -11,6 +11,6 @@ export const blogs = mysqlTable("blogs", {
   author: varchar("author", { length: 255 }).notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   image: varchar("image", { length: 500 }),
-  description: text("description").notNull(),
+  content: text("content").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });

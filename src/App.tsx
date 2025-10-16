@@ -12,7 +12,7 @@ import DashboardLayout from "./components/pages/dashboardLayout";
 import ManageBlogs from "./components/pages/manageBlog";
 import LoginPage from "./components/pages/login";
 import React from "react";
-import Blog from "./components/blog";
+import Blog from "./components/Blog";
 import AddBlogForm from "./components/pages/addBlog";
 
 function App() {

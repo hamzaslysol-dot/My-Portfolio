@@ -6,7 +6,6 @@ interface Blog {
   author_name: string;
   image: string;
   title: string;
-  description: string;
   content?: string; // ✅ added for full content
   date: string;
 }
@@ -57,11 +56,6 @@ export default function BlogDetail() {
         <p className="text-gray-400 mb-4">
           By {blog.author_name} • {new Date(blog.date).toLocaleDateString()}
         </p>
-
-        {/* 🧠 Description */}
-        {blog.description && (
-          <p className="text-lg text-gray-300 mb-6">{blog.description}</p>
-        )}
 
         {/* 📝 Full Content */}
         {blog.content && (

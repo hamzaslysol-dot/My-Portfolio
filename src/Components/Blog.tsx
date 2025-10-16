@@ -10,7 +10,7 @@ interface BlogItem {
   date: string;
   image: string;
   title: string;
-  description: string;
+  content: string;
 }
 
 const Blog = () => {
@@ -94,9 +94,9 @@ const Blog = () => {
                   {new Date(blog.date).toLocaleDateString()}
                 </p>
                 <p className="text-gray-300 mb-2">
-                  {blog.description.length > 150
-                    ? blog.description.slice(0, 150) + "..."
-                    : blog.description}
+                  {blog.content.length > 150
+                    ? blog.content.slice(0, 150) + "..."
+                    : blog.content}
                 </p>
 
                 <Link

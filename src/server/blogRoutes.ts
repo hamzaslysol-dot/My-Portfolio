@@ -2,7 +2,7 @@ import { Router } from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { raw as db } from "../db.ts"; // ✅ MySQL connection
+import { raw as db } from "../db.ts";
 
 const router = Router();
 
@@ -20,12 +20,18 @@ const upload = multer({ storage });
 /* -------------------- ADD NEW BLOG -------------------- */
 router.post("/", upload.single("image"), async (req, res) => {
   try {
-    const { title, author, description, content } = req.body;
+    // ✅ Remove description, match your schema
+    const { title = "", author = "", content = "" } = req.body;
     const image = req.file ? `/uploads/${req.file.filename}` : null;
 
+    // ✅ Validate inputs
+    if (!title || !author || !content) {
+      return res.status(400).json({ error: "All fields are required." });
+    }
+
     const [result]: any = await db.execute(
-      "INSERT INTO blogs (title, author, description, content, image, created_at) VALUES (?, ?, ?, ?, ?, NOW())",
-      [title, author, description, content, image]
+      "INSERT INTO blogs (title, author, content, image, created_at) VALUES (?, ?, ?, ?, NOW())",
+      [title, author, content, image ?? null]
     );
 
     const [rows]: any = await db.execute("SELECT * FROM blogs WHERE id = ?", [
@@ -47,7 +53,7 @@ router.get("/", async (_, res) => {
         id,
         author AS author_name,
         title,
-        description,
+        COALESCE(content, '') AS content,  -- ✅ ensures string, not null
         CONCAT('http://localhost:8000', image) AS image,
         created_at AS date
       FROM blogs
@@ -70,8 +76,7 @@ router.get("/:id", async (req, res) => {
         id,
         author AS author_name,
         title,
-        description,
-        content,
+        COALESCE(content, '') AS content,  -- ✅ ensures string, not null
         CONCAT('http://localhost:8000', image) AS image,
         created_at AS date
       FROM blogs
@@ -91,39 +96,38 @@ router.get("/:id", async (req, res) => {
 });
 
 /* -------------------- UPDATE BLOG -------------------- */
-router.put("/:id", upload.single("image"), async (req, res) => {
-  try {
-    const blogId = Number(req.params.id);
-    const { title, author, description, content } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : null;
+// router.put("/:id", upload.single("image"), async (req, res) => {
+//   try {
+//     const blogId = Number(req.params.id);
+//     const { title = "", author = "", content = "" } = req.body;
+//     const image = req.file ? `/uploads/${req.file.filename}` : null;
 
-    let query =
-      "UPDATE blogs SET title = ?, author = ?, description = ?, content = ?";
-    const fields: any[] = [title, author, description, content];
+//     let query = "UPDATE blogs SET title = ?, author = ?, content = ?";
+//     const fields: any[] = [title, author, content];
 
-    if (image) {
-      query += ", image = ?";
-      fields.push(image);
-    }
+//     if (image) {
+//       query += ", image = ?";
+//       fields.push(image);
+//     }
 
-    query += " WHERE id = ?";
-    fields.push(blogId);
+//     query += " WHERE id = ?";
+//     fields.push(blogId);
 
-    await db.execute(query, fields);
+//     await db.execute(query, fields);
 
-    const [rows]: any = await db.execute("SELECT * FROM blogs WHERE id = ?", [
-      blogId,
-    ]);
+//     const [rows]: any = await db.execute("SELECT * FROM blogs WHERE id = ?", [
+//       blogId,
+//     ]);
 
-    if (rows.length === 0)
-      return res.status(404).json({ error: "Blog not found" });
+//     if (rows.length === 0)
+//       return res.status(404).json({ error: "Blog not found" });
 
-    res.json(rows[0]);
-  } catch (error) {
-    console.error("❌ Error updating blog:", error);
-    res.status(500).json({ error: "Failed to update blog" });
-  }
-});
+//     res.json(rows[0]);
+//   } catch (error) {
+//     console.error("❌ Error updating blog:", error);
+//     res.status(500).json({ error: "Failed to update blog" });
+//   }
+// });
 
 /* -------------------- DELETE BLOG -------------------- */
 router.delete("/:id", async (req, res) => {
@@ -137,4 +141,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-export default router; // ✅ Now at the very end
+export default router;
