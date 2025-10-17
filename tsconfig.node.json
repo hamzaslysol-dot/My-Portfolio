@@ -1,31 +1,17 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "lib": [
-      "ES2022"
-    ],
+    "composite": true,
     "module": "ESNext",
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "noEmit": true,
-    "verbatimModuleSyntax": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "outDir": "dist/server"
+    "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "types": [
+      "node"
+    ],
+    "noEmit": true
   },
   "include": [
-    "server/index/**/*.ts",
-    "server/index.ts",
-    "server/db.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "build"
+    "vite.config.ts",
+    "tsconfig.node.json"
   ]
 }
