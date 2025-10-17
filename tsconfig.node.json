@@ -19,9 +19,9 @@
     "outDir": "dist/server"
   },
   "include": [
-    "src/server/**/*.ts",
-    "src/server.ts",
-    "src/db.ts"
+    "server/index/**/*.ts",
+    "server/index.ts",
+    "server/db.ts"
   ],
   "exclude": [
     "node_modules",

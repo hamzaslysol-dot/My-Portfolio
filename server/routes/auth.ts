@@ -2,13 +2,13 @@ import { Router } from "express";
 import { OAuth2Client } from "google-auth-library";
 import jwt from "jsonwebtoken";
 
-const router = Router();
+export const authRouter = Router();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Replace with your own secret
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
-router.post("/google", async (req, res) => {
+authRouter.post("/google", async (req, res) => {
   try {
     const { token } = req.body;
 
@@ -36,5 +36,3 @@ router.post("/google", async (req, res) => {
     res.status(401).json({ error: "Invalid Google token" });
   }
 });
-
-export default router;

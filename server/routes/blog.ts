@@ -4,7 +4,7 @@ import path from "path";
 import fs from "fs";
 import { raw as db } from "../db.ts";
 
-const router = Router();
+export const blogRouter = Router();
 
 /* -------------------- SETUP MULTER -------------------- */
 const uploadDir = path.join(process.cwd(), "uploads");
@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* -------------------- ADD NEW BLOG -------------------- */
-router.post("/", upload.single("image"), async (req, res) => {
+blogRouter.post("/", upload.single("image"), async (req, res) => {
   try {
     const { title = "", author = "", content = "" } = req.body;
     const image = req.file ? `/uploads/${req.file.filename}` : null;
@@ -48,7 +48,7 @@ router.post("/", upload.single("image"), async (req, res) => {
 });
 
 /* -------------------- GET ALL BLOGS -------------------- */
-router.get("/", async (_, res) => {
+blogRouter.get("/", async (_, res) => {
   try {
     const [rows]: any = await db.execute(`
       SELECT 
@@ -69,7 +69,7 @@ router.get("/", async (_, res) => {
 });
 
 /* -------------------- GET SINGLE BLOG -------------------- */
-router.get("/:id", async (req, res) => {
+blogRouter.get("/:id", async (req, res) => {
   try {
     const blogId = Number(req.params.id);
     const [rows]: any = await db.execute(
@@ -98,7 +98,7 @@ router.get("/:id", async (req, res) => {
 });
 
 /* -------------------- UPDATE BLOG -------------------- */
-router.put("/:id", upload.single("image"), async (req, res) => {
+blogRouter.put("/:id", upload.single("image"), async (req, res) => {
   try {
     const blogId = Number(req.params.id);
     const { title = "", author = "", content = "" } = req.body;
@@ -140,7 +140,7 @@ router.put("/:id", upload.single("image"), async (req, res) => {
 });
 
 /* -------------------- DELETE BLOG -------------------- */
-router.delete("/:id", async (req, res) => {
+blogRouter.delete("/:id", async (req, res) => {
   try {
     const blogId = Number(req.params.id);
     const [existing]: any = await db.execute(
@@ -164,5 +164,3 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete blog" });
   }
 });
-
-export default router;

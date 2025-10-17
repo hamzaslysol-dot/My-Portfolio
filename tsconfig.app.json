@@ -32,6 +32,11 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    "src/types/**/*.d.ts"
+    "src/types/**/*.d.ts",
+    "server/db.ts",
+    "server/index.ts",
+    "server/middleware.ts",
+    "server/routes/blog.ts",
+    "server/routes/auth.ts"
   ]
 }

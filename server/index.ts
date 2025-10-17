@@ -2,9 +2,8 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import { raw as db } from "./db.ts";
-import blogRoutes from "./server/blogRoutes.ts";
-import authRoutes from "./server/authRoutes.ts";
-import { verifyAdmin } from "./server/middleware.ts";
+import { blogRouter, authRouter } from "./routes";
+import { verifyAdmin } from "./middleware.ts";
 
 const app = express();
 
@@ -24,15 +23,14 @@ app.use(express.json());
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 // ✅ Public blog routes
-app.use("/api/blogs", blogRoutes);
+app.use("/api/blogs", blogRouter);
 
 // ✅ Auth routes
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", authRouter);
 
 // ✅ Protected admin routes (optional)
-app.use("/api/admin/blogs", verifyAdmin, blogRoutes);
+app.use("/api/admin/blogs", verifyAdmin, blogRouter);
 
-// ✅ Fallback
 app.get("/", (_, res) => {
   res.send("🚀 Blog API running...");
 });
