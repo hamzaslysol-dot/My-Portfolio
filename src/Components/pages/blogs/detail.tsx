@@ -82,7 +82,7 @@ export default function BlogDetail() {
         {/* 📝 Markdown Preview (same as Add/Edit) */}
         <div
           data-color-mode="dark"
-          className="bg-gray-900 p-6 rounded-2xl shadow-lg mb-10"
+          className=" p-6 rounded-2xl shadow-lg mb-10"
         >
           <MDEditor.Markdown
             source={markdownContent}
