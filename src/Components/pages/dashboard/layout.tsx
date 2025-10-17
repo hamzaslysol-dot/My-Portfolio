@@ -1,12 +1,6 @@
 import { useNavigate, Outlet, Link, useLocation } from "react-router-dom";
 import { useState } from "react";
-import {
-  Menu,
-  LayoutDashboard,
-  PlusSquare,
-  LogOut,
-  BookOpen,
-} from "lucide-react";
+import { Menu, LayoutDashboard, LogOut } from "lucide-react";
 export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,19 +15,14 @@ export default function DashboardLayout() {
   // Define sidebar links
   const navLinks = [
     {
-      name: "Manage Blogs",
+      name: "Blogs",
       path: "/dashboard/view",
       icon: <LayoutDashboard size={18} />,
     },
     {
-      name: "Add Blog",
-      path: "/dashboard/add",
-      icon: <PlusSquare size={18} />,
-    },
-    {
-      name: "View Blogs",
-      path: "/blog",
-      icon: <BookOpen size={18} />,
+      name: "Authhor",
+      path: "",
+      icon: <LayoutDashboard size={18} />,
     },
   ];
 
