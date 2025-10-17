@@ -7,14 +7,14 @@ import Services from "./components/Services";
 import MyWork from "./components/myWork";
 import Contact from "./components/Contact";
 import Navbar from "./components/NavBar";
-import BlogDetail from "./components/pages/detail";
+import BlogDetail from "./components/pages/blogs/detail";
 import DashboardLayout from "./components/pages/dashboard/layout";
-import ManageBlogs from "./components/pages/manage";
+import ManageBlogs from "./components/pages/blogs/manage";
 import LoginPage from "./components/pages/dashboard/login";
 import React from "react";
 import Blog from "./components/Blog";
-import AddBlogForm from "./components/pages/add";
-import EditBlog from "./components/pages/edit";
+import AddBlogForm from "./components/pages/blogs/add";
+import EditBlog from "./components/pages/blogs/edit";
 
 function App() {
   const location = useLocation();
