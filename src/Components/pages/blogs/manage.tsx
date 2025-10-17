@@ -75,7 +75,7 @@ export default function ManageBlogs() {
           <input
             type="text"
             placeholder="Search by title or author..."
-            value={search ?? ""} // ✅ Always controlled
+            value={search ?? ""}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full sm:w-1/2 border border-gray-700 rounded-lg px-3 py-2 bg-gray-900 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
           />

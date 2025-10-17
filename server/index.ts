@@ -2,8 +2,9 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import { raw as db } from "./db.ts";
-import { blogRouter, authRouter } from "./routes";
+import { blogRouter } from "./routes/blog.ts";
 import { verifyAdmin } from "./middleware.ts";
+import { authRouter } from "./routes/auth.ts";
 
 const app = express();
 
