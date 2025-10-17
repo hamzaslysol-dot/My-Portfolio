@@ -1,92 +1,92 @@
-import {
-  GoogleLogin,
-  GoogleOAuthProvider,
-  type CredentialResponse,
-} from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const GOOGLE_CLIENT_ID =
-  "965379596061-r3r4k080q1i1042nik0o4bhllah528bu.apps.googleusercontent.com";
-
-const LoginPage = () => {
+export default function LoginPage() {
   const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  // ✅ If already logged in, redirect to dashboard
+  // ✅ If already logged in, redirect straight to dashboard
   useEffect(() => {
     const user = localStorage.getItem("user");
     if (user) navigate("/dashboard");
   }, [navigate]);
 
-  // ✅ Handle successful Google login
-  const handleLoginSuccess = (response: CredentialResponse) => {
+  // ✅ Handle login form submit
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
+
     try {
-      if (!response.credential) {
-        console.error("No credential found in Google response");
-        return;
-      }
+      // 👇 Send credentials to backend
+      const res = await axios.post("http://localhost:8000/api/auth/login", {
+        username,
+        password,
+      });
 
-      const userInfo: any = jwtDecode(response.credential);
-      console.log("✅ Google user:", userInfo);
+      // Expecting: { token, user: { name, email, role } }
+      const { token, user } = res.data;
 
-      // ✅ Assign admin or user role
-      if (userInfo.email === "hamza.slysol@gmail.com") {
-        localStorage.setItem("role", "admin");
-      } else {
-        localStorage.setItem("role", "user");
-      }
+      // ✅ Save user info + token
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("role", user.role);
 
-      localStorage.setItem("user", JSON.stringify(userInfo));
-      localStorage.setItem("token", response.credential);
-
+      // ✅ Redirect to dashboard
       navigate("/dashboard");
-    } catch (err) {
-      console.error("Error decoding Google login response:", err);
+    } catch (err: any) {
+      console.error("❌ Login error:", err);
+      setError(err.response?.data?.message || "Invalid username or password.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleLoginError = () => {
-    alert("❌ Google login failed. Please try again.");
-  };
-
-  // ✅ Handle logout (optional)
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("role");
-    localStorage.removeItem("token");
-    navigate("/dashboard/login");
-  };
-
   return (
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-        <div className="bg-white p-8 rounded-xl shadow-lg w-[400px] text-center">
-          <h2 className="text-3xl font-bold mb-6">Admin Login</h2>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded-xl shadow-lg w-[400px] text-center">
+        <h2 className="text-3xl font-bold mb-6 text-gray-800">Admin Login</h2>
 
-          {/* ✅ Google Login Button */}
-          <GoogleLogin
-            onSuccess={handleLoginSuccess}
-            onError={handleLoginError}
-            theme="outline"
-            size="large"
-            text="signin_with"
-            shape="rectangular"
-          />
+        {/* ⚠️ Show any login errors */}
+        {error && <p className="text-red-500 mb-4">{error}</p>}
 
-          {/* ✅ Logout button if user already logged in */}
-          {localStorage.getItem("user") && (
-            <button
-              onClick={handleLogout}
-              className="mt-6 w-full bg-blue-400 text-white py-2 rounded hover:bg-blue-600"
-            >
-              Logout
-            </button>
-          )}
-        </div>
+        {/* 🧾 Login Form */}
+        <form onSubmit={handleLogin} className="flex flex-col gap-4 text-left">
+          <div>
+            <label className="block text-gray-600 mb-1">Username</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-600 mb-1">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50"
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
       </div>
-    </GoogleOAuthProvider>
+    </div>
   );
-};
-
-export default LoginPage;
+}

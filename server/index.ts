@@ -3,9 +3,7 @@ import cors from "cors";
 import path from "path";
 import { raw as db } from "./db.ts";
 import { blogRouter } from "./routes/blog.ts";
-import { verifyAdmin } from "./middleware.ts";
 import { authRouter } from "./routes/auth.ts";
-
 const app = express();
 
 // ✅ MySQL connection test
@@ -28,10 +26,6 @@ app.use("/api/blogs", blogRouter);
 
 // ✅ Auth routes
 app.use("/api/auth", authRouter);
-
-// ✅ Protected admin routes (optional)
-app.use("/api/admin/blogs", verifyAdmin, blogRouter);
-
 app.get("/", (_, res) => {
   res.send("🚀 Blog API running...");
 });

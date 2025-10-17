@@ -1,38 +1,43 @@
-import { Router } from "express";
-import { OAuth2Client } from "google-auth-library";
+import express from "express";
 import jwt from "jsonwebtoken";
 
-export const authRouter = Router();
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+export const authRouter = express.Router();
+const SECRET = "mysecretkey"; // use env variable in production
 
-// Replace with your own secret
-const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
+// Dummy users for testing
+const USERS = [
+  {
+    username: "admin",
+    password: "admin123",
+    role: "admin",
+    email: "admin@example.com",
+  },
+  {
+    username: "user",
+    password: "user123",
+    role: "user",
+    email: "user@example.com",
+  },
+];
 
-authRouter.post("/google", async (req, res) => {
-  try {
-    const { token } = req.body;
+// POST /api/auth/login
+authRouter.post("/login", (req, res) => {
+  const { username, password } = req.body;
 
-    // Verify Google token
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
+  const user = USERS.find(
+    (u) => u.username === username && u.password === password
+  );
 
-    const payload = ticket.getPayload();
-    if (!payload) throw new Error("Invalid Google token");
-
-    const { email, name, picture } = payload;
-
-    // Generate your own session JWT
-    const customToken = jwt.sign(
-      { email, name, picture, role: "admin" },
-      JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-
-    res.json({ token: customToken });
-  } catch (err) {
-    console.error("Google auth error:", err);
-    res.status(401).json({ error: "Invalid Google token" });
+  if (!user) {
+    return res.status(401).json({ message: "Invalid username or password" });
   }
+
+  const token = jwt.sign({ username: user.username, role: user.role }, SECRET, {
+    expiresIn: "1h",
+  });
+
+  res.json({
+    token,
+    user: { name: user.username, role: user.role, email: user.email },
+  });
 });
