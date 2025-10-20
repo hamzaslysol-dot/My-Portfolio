@@ -90,11 +90,13 @@ const MyWork = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 pt-20 gap-10">
               {projects.map((project) => (
                 <div key={project.id}>
-                  <img
-                    src={project.imgSrc}
-                    alt={project.alt}
-                    className="mt-5 mx-auto rounded-2xl shadow-lg hover:scale-105 transition-transform duration-300"
-                  />
+                  <a href={project.href} rel="noopener noreferrer">
+                    <img
+                      src={project.imgSrc}
+                      alt={project.alt}
+                      className="mt-5 mx-auto rounded-2xl shadow-lg hover:scale-105 transition-transform duration-300"
+                    />
+                  </a>
                   <p className="font-bold text-xl text-center mt-2">
                     <a href={project.href} rel="noopener noreferrer">
                       {project.label}
