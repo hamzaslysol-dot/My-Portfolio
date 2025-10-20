@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import Container from "./container";
 import Bg from "../assets/bg.mp4";
 import Pagination from "./pagenation";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
 
 interface BlogItem {
   id: number;

@@ -70,7 +70,7 @@ export default function AddBlog() {
         headers: { "Content-Type": "multipart/form-data" },
       });
       alert("✅ Blog added successfully!");
-      navigate("/manageblogs");
+      navigate("/blog");
     } catch (error) {
       console.error("❌ Error adding blog:", error);
       alert("Failed to add blog");
@@ -105,11 +105,9 @@ export default function AddBlog() {
 
         {/* ✨ Markdown Editor */}
         <div data-color-mode="dark" className="space-y-2">
-          <label className="block text-sm text-gray-400">
-            Content (Markdown)
-          </label>
+          <label className="block text-sm text-gray-400">Content</label>
 
-          {/* 🔽 Markdown Toolbar (image insert) */}
+          {/* 🔽 Markdown Toolbar (image insert)
           <div className="flex justify-end mb-1">
             <label className="cursor-pointer bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm transition">
               {uploading ? "Uploading..." : "Insert Image"}
@@ -121,17 +119,13 @@ export default function AddBlog() {
                 disabled={uploading}
               />
             </label>
-          </div>
+          </div> */}
 
           <MDEditor
             value={content}
             onChange={(val) => setContent(val || "")}
             height={300}
             preview="live"
-            textareaProps={{
-              placeholder:
-                "Write your blog in Markdown... e.g., **bold**, _italic_, or ![alt](image_url)",
-            }}
           />
         </div>
 
@@ -140,12 +134,14 @@ export default function AddBlog() {
           <label className="block text-sm text-gray-400 mb-1">
             Featured Image
           </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="w-full text-gray-300"
-          />
+          <button>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="w-full text-gray-300 border hover:underline hover:text-blue-400 p-2 rounded bg-gray-800"
+            />
+          </button>
         </div>
 
         {preview && (
