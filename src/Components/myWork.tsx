@@ -15,7 +15,7 @@ const projects = [
     imgSrc: Project1,
     label: "Game Hub",
     alt: "Screenshot of Game Hub project",
-    href: "https://game-hub-bay-eta.vercel.app",
+    href: "https://rawg-wine.vercel.app/",
   },
   {
     id: 2,

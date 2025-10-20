@@ -1,18 +1,18 @@
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
-import Home from "./components/Home";
-import About from "./components/About";
-import Experience from "./components/Experience";
-import Landing from "./components/Landing";
-import Services from "./components/Services";
+import Home from "./components/home";
+import About from "./components/about";
+import Experience from "./components/experience";
+import Landing from "./components/landing";
+import Services from "./components/services";
 import MyWork from "./components/myWork";
-import Contact from "./components/Contact";
-import Navbar from "./components/NavBar";
+import Contact from "./components/contact";
+import Navbar from "./components/navBar";
 import BlogDetail from "./components/pages/blogs/detail";
 import DashboardLayout from "./components/pages/dashboard/layout";
 import ManageBlogs from "./components/pages/blogs/manage";
 import LoginPage from "./components/pages/dashboard/login";
 import React from "react";
-import Blog from "./components/Blog";
+import Blog from "./components/blog";
 import AddBlogForm from "./components/pages/blogs/add";
 import EditBlog from "./components/pages/blogs/edit";
 

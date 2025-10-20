@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import Landing from "./Landing";
-import Experience from "./Experience";
-import About from "./About";
-import Services from "./Services";
+import Landing from "./landing";
+import Experience from "./experience";
+import About from "./about";
+import Services from "./services";
 import MyWork from "./myWork";
-import Contact from "./Contact";
-import Footer from "./Footer";
-import Navbar from "./NavBar";
+import Contact from "./contact";
+import Footer from "./footer";
+import Navbar from "./navBar";
 
 const Home = () => {
   const [show, setShow] = useState(false);
