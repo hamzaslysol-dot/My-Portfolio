@@ -8,11 +8,11 @@ import "@uiw/react-markdown-preview/markdown.css";
 
 interface BlogItem {
   id: number;
-  author_name: string;
-  date: string;
-  image: string;
   title: string;
   content: string;
+  image: string;
+  author: string;
+  createdAt: string;
 }
 
 const Blog = () => {
@@ -86,14 +86,22 @@ const Blog = () => {
                 className="backdrop-blur-sm p-5 rounded-3xl shadow-md hover:shadow-lg transition-all duration-300"
               >
                 <img
-                  src={blog.image}
+                  src={
+                    blog.image.startsWith("http")
+                      ? blog.image
+                      : `http://localhost:8000/${blog.image.replace(
+                          /^\/+/,
+                          ""
+                        )}`
+                  }
                   alt={blog.title}
                   className="w-full h-64 object-cover rounded-3xl mb-5 hover:scale-105 transition-transform duration-300"
                 />
+
                 <p className="text-2xl font-bold mb-2">{blog.title}</p>
                 <p className="text-sm text-gray-400 mb-2">
-                  By {blog.author_name} Date:
-                  {new Date(blog.date).toLocaleDateString()}
+                  By {blog.author} Date:
+                  {new Date(blog.createdAt).toLocaleDateString()}
                 </p>
                 <p className="text-gray-300 mb-2">
                   {blog.content.length > 150

@@ -6,11 +6,11 @@ import "@uiw/react-markdown-preview/markdown.css";
 
 interface Blog {
   id: number;
-  author_name: string;
+  author: string;
   image: string;
   title: string;
   content?: string;
-  date: string;
+  createdAt: string;
 }
 
 export default function BlogDetail() {
@@ -62,17 +62,21 @@ export default function BlogDetail() {
         {/* 🖼️ Blog image */}
         {blog.image && (
           <img
-            src={blog.image}
+            src={
+              blog.image.startsWith("http")
+                ? blog.image
+                : `http://localhost:8000/${blog.image.replace(/^\/+/, "")}`
+            }
             alt={blog.title}
-            className="rounded-lg mb-6 w-full max-h-[500px] object-cover shadow-lg"
+            className="w-full h-64 object-cover rounded-3xl mb-5 hover:scale-105 transition-transform duration-300"
           />
         )}
 
         {/* 🧾 Blog Info */}
         <h1 className="text-4xl font-bold mb-2">{blog.title}</h1>
         <p className="text-gray-400 mb-6">
-          By {blog.author_name} •{" "}
-          {new Date(blog.date).toLocaleDateString(undefined, {
+          By {blog.author} • Date:
+          {new Date(blog.createdAt).toLocaleDateString(undefined, {
             year: "numeric",
             month: "long",
             day: "numeric",

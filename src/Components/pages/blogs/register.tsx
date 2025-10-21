@@ -2,40 +2,32 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const LoginPage: React.FC = () => {
+const RegisterPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:8000/api/auth/login", {
+      const res = await axios.post("http://localhost:8000/api/auth/register", {
         username,
         password,
       });
 
-      // ✅ Expecting backend to return token + user info
-      if (res.status === 200) {
-        const { token, user } = res.data;
-
-        // Save credentials
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user));
-        localStorage.setItem("role", user.role || "user");
-
-        alert("✅ Login successful!");
-        navigate("/add"); // Redirect to add blog
+      if (res.status === 201) {
+        alert("✅ Registration successful! Please log in.");
+        navigate("/dashboard/login");
       }
     } catch (err: any) {
-      console.error("❌ Login error:", err);
-      if (err.response?.status === 401) {
-        setError("Invalid username or password.");
+      console.error("❌ Registration error:", err);
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
       } else {
         setError("Something went wrong. Please try again.");
       }
@@ -47,11 +39,11 @@ const LoginPage: React.FC = () => {
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-900">
       <form
-        onSubmit={handleLogin}
+        onSubmit={handleRegister}
         className="bg-gray-800 p-8 rounded-2xl shadow-lg w-full max-w-md border border-gray-700"
       >
         <h2 className="text-2xl font-semibold text-center text-white mb-6">
-          Admin Login
+          Register Admin
         </h2>
 
         {error && (
@@ -93,17 +85,17 @@ const LoginPage: React.FC = () => {
               : "bg-blue-600 hover:bg-blue-700"
           } text-white transition`}
         >
-          {loading ? "Logging in..." : "Login"}
+          {loading ? "Registering..." : "Register"}
         </button>
 
         <p className="text-gray-400 text-center mt-4">
-          Don’t have an account?{" "}
+          Already have an account?{" "}
           <button
             type="button"
-            onClick={() => navigate("/dashboard/register")}
+            onClick={() => navigate("/dashboard/login")}
             className="text-blue-400 hover:text-blue-500"
           >
-            Register
+            Login
           </button>
         </p>
       </form>
@@ -111,4 +103,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

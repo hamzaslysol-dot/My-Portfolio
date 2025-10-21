@@ -7,9 +7,9 @@ import Pagination from "../../pagenation";
 interface Blog {
   id: number;
   title: string;
-  author_name: string;
+  author: string;
   image?: string;
-  date: string;
+  createdAt: string;
 }
 
 export default function ManageBlogs() {
@@ -56,7 +56,7 @@ export default function ManageBlogs() {
   const filteredBlogs = blogs.filter(
     (blog) =>
       blog.title.toLowerCase().includes(search.toLowerCase()) ||
-      blog.author_name.toLowerCase().includes(search.toLowerCase())
+      blog.author.toLowerCase().includes(search.toLowerCase())
   );
 
   // ✅ Calculate pagination AFTER filtering
@@ -128,7 +128,14 @@ export default function ManageBlogs() {
                     <td className="p-3">
                       {blog.image ? (
                         <img
-                          src={blog.image}
+                          src={
+                            blog.image.startsWith("http")
+                              ? blog.image
+                              : `http://localhost:8000/${blog.image.replace(
+                                  /^\/+/,
+                                  ""
+                                )}`
+                          }
                           alt={blog.title}
                           className="w-20 h-14 object-cover rounded-md border border-gray-700"
                         />
@@ -141,9 +148,9 @@ export default function ManageBlogs() {
 
                     {/* Blog info */}
                     <td className="p-3">{blog.title}</td>
-                    <td className="p-3">{blog.author_name}</td>
+                    <td className="p-3">{blog.author}</td>
                     <td className="p-3 text-gray-400">
-                      {new Date(blog.date).toLocaleDateString()}
+                      {new Date(blog.createdAt).toLocaleDateString()}
                     </td>
 
                     {/* ✏️ Actions */}

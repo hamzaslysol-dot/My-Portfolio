@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate, Outlet } from "react-router-dom";
 import Home from "./components/home";
 import About from "./components/about";
 import Experience from "./components/experience";
@@ -11,26 +11,31 @@ import BlogDetail from "./components/pages/blogs/detail";
 import DashboardLayout from "./components/pages/dashboard/layout";
 import ManageBlogs from "./components/pages/blogs/manage";
 import LoginPage from "./components/pages/dashboard/login";
-import React from "react";
 import Blog from "./components/blog";
 import AddBlogForm from "./components/pages/blogs/add";
 import EditBlog from "./components/pages/blogs/edit";
+import RegisterPage from "./components/pages/blogs/register";
 
 function App() {
   const location = useLocation();
+
+  // Hide navbar only for dashboard and landing routes
   const hideNavbar =
-    location.pathname.startsWith("/dashboard") || location.pathname === "/";
+    location.pathname.startsWith("/dashboard") ||
+    location.pathname === "/" ||
+    location.pathname === "/landing";
 
   // ✅ Admin route guard
-  const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+  const AdminRoute = () => {
+    const token = localStorage.getItem("token");
     const user = JSON.parse(localStorage.getItem("user") || "null");
-    const role = localStorage.getItem("role");
+    const role = localStorage.getItem("role") || user?.role;
 
-    if (!user || role !== "admin") {
+    if (!token || !user || role !== "admin") {
       return <Navigate to="/dashboard/login" replace />;
     }
 
-    return <>{children}</>;
+    return <Outlet />;
   };
 
   return (
@@ -38,7 +43,7 @@ function App() {
       {!hideNavbar && <Navbar classes={{ root: "bg-black" }} />}
 
       <Routes>
-        {/* 🏠 Portfolio routes */}
+        {/* 🌐 Public Portfolio Routes */}
         <Route path="/" element={<Home />} />
         <Route path="/landing" element={<Landing />} />
         <Route path="/about" element={<About />} />
@@ -47,30 +52,20 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/experience" element={<Experience />} />
         <Route path="/blog" element={<Blog />} />
-
-        {/* 📖 Blog Public Route */}
         <Route path="/blog/:id" element={<BlogDetail />} />
 
         {/* 🧱 Dashboard Routes */}
-        <Route path="/dashboard">
-          {/* 🧑‍💻 Login Page (Public) */}
-          <Route path="login" element={<LoginPage />} />
+        <Route path="/dashboard/register" element={<RegisterPage />} />
+        <Route path="/dashboard/login" element={<LoginPage />} />
 
-          {/* 🔐 Protected Admin Routes */}
-          <Route
-            path=""
-            element={
-              <AdminRoute>
-                <DashboardLayout />
-              </AdminRoute>
-            }
-          >
-            <Route index element={<Navigate to="view" />} />
+        {/* 🔐 Protected Admin Routes */}
+        <Route element={<AdminRoute />}>
+          <Route path="/dashboard" element={<DashboardLayout />}>
+            <Route index element={<Navigate to="view" replace />} />
             <Route path="view" element={<ManageBlogs />} />
-            <Route path="/dashboard/add" element={<AddBlogForm />} />
-
-            <Route path="/dashboard/manage" element={<ManageBlogs />} />
-            <Route path="/dashboard/edit/:id" element={<EditBlog />} />
+            <Route path="add" element={<AddBlogForm />} />
+            <Route path="manage" element={<ManageBlogs />} />
+            <Route path="edit/:id" element={<EditBlog />} />
           </Route>
         </Route>
 
