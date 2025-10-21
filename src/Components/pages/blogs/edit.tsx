@@ -21,11 +21,11 @@ export default function EditBlog() {
   const [author, setAuthor] = useState("");
   const [content, setContent] = useState<string>("");
   const [image, setImage] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
 
-  // ✅ Fetch existing blog
+  // -------------------- Fetch existing blog --------------------
   useEffect(() => {
     const fetchBlog = async () => {
       try {
@@ -33,14 +33,21 @@ export default function EditBlog() {
           `http://localhost:8000/api/blogs/${id}`
         );
         const blog = res.data;
+
         setTitle(blog.title);
         setAuthor(blog.author);
         setContent(blog.content);
-        setPreview(blog.image);
+
+        // ✅ Convert relative path to full URL for preview
+        const imageUrl = blog.image.startsWith("http")
+          ? blog.image
+          : `http://localhost:8000/${blog.image.replace(/^\/+/, "")}`;
+
+        setPreviewImage(imageUrl);
       } catch (error) {
         console.error("❌ Error fetching blog:", error);
         alert("Blog not found!");
-        navigate(`/blog/${id}`);
+        navigate("/dashboard/view");
       } finally {
         setLoading(false);
       }
@@ -48,15 +55,18 @@ export default function EditBlog() {
     fetchBlog();
   }, [id, navigate]);
 
+  // -------------------- Handle Featured Image Change --------------------
   const handleFeaturedImageChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = e.target.files?.[0] || null;
     setImage(file);
-    setPreview(file ? URL.createObjectURL(file) : preview);
+
+    // Show preview of newly selected file
+    setPreviewImage(file ? URL.createObjectURL(file) : null);
   };
 
-  // ✅ Upload image and insert Markdown syntax
+  // -------------------- Insert image into Markdown --------------------
   const handleInsertImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -66,7 +76,6 @@ export default function EditBlog() {
     setUploading(true);
 
     try {
-      // 👇 Adjust endpoint to your backend image upload route
       const res = await axios.post(
         "http://localhost:8000/api/upload",
         formData,
@@ -78,7 +87,6 @@ export default function EditBlog() {
       const imageUrl = res.data?.url;
       if (!imageUrl) throw new Error("No image URL returned");
 
-      // Insert markdown image syntax
       setContent((prev) => `${prev}\n\n![alt text](${imageUrl})\n`);
       alert("✅ Image inserted into Markdown!");
     } catch (error) {
@@ -90,7 +98,7 @@ export default function EditBlog() {
     }
   };
 
-  // ✅ Submit updated data
+  // -------------------- Submit updated blog --------------------
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -115,6 +123,7 @@ export default function EditBlog() {
   if (loading)
     return <p className="text-center mt-10 text-gray-400">Loading...</p>;
 
+  // -------------------- Render --------------------
   return (
     <div className="bg-black min-h-screen text-white flex justify-center items-center p-6">
       <form
@@ -141,13 +150,12 @@ export default function EditBlog() {
           className="w-full p-2 rounded bg-gray-800 text-white"
         />
 
-        {/* ✨ Markdown Editor */}
+        {/* Markdown Editor */}
         <div data-color-mode="dark" className="space-y-2">
           <label className="block text-sm text-gray-400">
             Content (Markdown)
           </label>
 
-          {/* 🖼️ Markdown Image Insert */}
           <div className="flex justify-end mb-1">
             <label className="cursor-pointer bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm transition">
               {uploading ? "Uploading..." : "Insert Image"}
@@ -173,7 +181,7 @@ export default function EditBlog() {
           />
         </div>
 
-        {/* 🖼️ Featured Image Upload */}
+        {/* Featured Image Upload */}
         <div className="mt-4">
           <label className="block text-sm text-gray-400 mb-1">
             Featured Image
@@ -186,9 +194,10 @@ export default function EditBlog() {
           />
         </div>
 
-        {preview && (
+        {/* Preview Image */}
+        {previewImage && (
           <img
-            src={preview}
+            src={previewImage}
             alt="Preview"
             className="w-full h-64 object-cover rounded-lg mt-3"
           />
