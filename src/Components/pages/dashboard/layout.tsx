@@ -1,10 +1,23 @@
 import { useNavigate, Outlet, Link, useLocation } from "react-router-dom";
-import { useState } from "react";
-import { Menu, LayoutDashboard, LogOut } from "lucide-react";
+import { useState, ChangeEvent } from "react";
+import { Menu, LayoutDashboard, LogOut, User } from "lucide-react";
+import axios from "axios";
+
+interface UserType {
+  id?: string;
+  name: string;
+  picture?: string;
+  role?: string;
+}
+
 export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const user = JSON.parse(localStorage.getItem("user") || "null");
+
+  const storedUser = JSON.parse(
+    localStorage.getItem("user") || "null"
+  ) as UserType | null;
+  const [user, setUser] = useState<UserType | null>(storedUser);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
@@ -12,18 +25,54 @@ export default function DashboardLayout() {
     navigate("/dashboard/login", { replace: true });
   };
 
-  // Define sidebar links
+  // ✅ Upload profile image to backend
+  const handleProfileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    const formData = new FormData();
+    formData.append("image", file); // must match multer.single("image")
+
+    try {
+      const res = await axios.post<{ url: string }>(
+        "http://localhost:8000/api/upload",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      const imageUrl = res.data.url;
+
+      // Optionally: Save permanently in backend
+      await axios.put(
+        `http://localhost:8000/api/users/${user.id}/profile`,
+        { picture: imageUrl },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
+
+      // Update locally
+      const updatedUser = { ...user, picture: imageUrl };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      setUser(updatedUser);
+    } catch (error: any) {
+      console.error(
+        "❌ Failed to upload image:",
+        error.response || error.message
+      );
+      alert("Failed to upload image. Check backend console for details.");
+    }
+  };
+
   const navLinks = [
     {
       name: "Blogs",
       path: "/dashboard/view",
       icon: <LayoutDashboard size={18} />,
     },
-    {
-      name: "Authhor",
-      path: "",
-      icon: <LayoutDashboard size={18} />,
-    },
+    { name: "Author", path: "", icon: <LayoutDashboard size={18} /> },
   ];
 
   return (
@@ -51,10 +100,22 @@ export default function DashboardLayout() {
 
           {user && (
             <div className="flex flex-col items-center mb-8">
+              {/* Upload Button */}
+              <label className="flex items-center justify-center mb-2 cursor-pointer gap-2 text-blue-400 hover:text-blue-500">
+                <User size={16} />
+                Set Profile
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleProfileChange}
+                  className="hidden"
+                />
+              </label>
+
               <img
-                src={user.picture}
+                src={user.picture || "/default-avatar.png"}
                 alt="Profile"
-                className="w-16 h-16 rounded-full mb-2 border border-gray-700"
+                className="w-16 h-16 rounded-full mb-2 border border-gray-700 object-cover"
               />
               <p className="font-medium">{user.name}</p>
               <p className="text-gray-400 text-sm">Admin</p>
@@ -99,7 +160,7 @@ export default function DashboardLayout() {
           />
         )}
 
-        {/* Main Dashboard Content */}
+        {/* Main Content */}
         <main className="flex-1 p-6 md:p-8 bg-black overflow-y-auto">
           <Outlet />
         </main>

@@ -30,7 +30,7 @@ const LoginPage: React.FC = () => {
         localStorage.setItem("role", user.role || "user");
 
         alert("✅ Login successful!");
-        navigate("/add"); // Redirect to add blog
+        navigate("/dashboard/view"); // Redirect to view dashboard
       }
     } catch (err: any) {
       console.error("❌ Login error:", err);
