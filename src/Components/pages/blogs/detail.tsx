@@ -1,81 +1,46 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 import MDEditor from "@uiw/react-md-editor";
-import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
-
-interface Blog {
-  id: number;
-  author: string;
-  image: string;
-  title: string;
-  content?: string;
-  createdAt: string;
-}
+import { useBlog } from "../../../hooks/useBlogs";
 
 export default function BlogDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [blog, setBlog] = useState<Blog | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!id) return;
+  // Fetch blog using React Query hook
+  const { data: blog, isLoading, isError } = useBlog(id);
 
-    fetch(`http://localhost:8000/api/blogs/${id}`)
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch blog");
-        return res.json();
-      })
-      .then((data) => {
-        setBlog(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("❌ Error fetching blog:", err);
-        setError("Blog not found");
-        setLoading(false);
-      });
-  }, [id]);
-
-  if (loading)
+  if (isLoading)
     return <p className="text-center mt-10 text-gray-400">Loading...</p>;
-  if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
-  if (!blog) return null;
 
-  // ✅ Normalize Markdown if escaped
-  const normalizeContent = (raw?: string) => {
-    if (!raw) return "";
-    let text = raw;
-    if (text.includes("\\n")) text = text.replace(/\\n/g, "\n");
-    const txt = document.createElement("textarea");
-    txt.innerHTML = text;
-    return txt.value;
+  if (isError || !blog)
+    return <p className="text-center mt-10 text-red-500">Blog not found.</p>;
+
+  const markdownContent = blog.content || "";
+
+  // Construct correct image URL
+  const getImageUrl = (image?: string) => {
+    if (!image) return null;
+    return image.startsWith("http")
+      ? image
+      : `http://localhost:8000/${image.replace(/^\/+/, "")}`;
   };
-
-  const markdownContent = normalizeContent(blog.content);
 
   return (
     <div className="bg-black min-h-screen text-white">
       <div className="max-w-4xl mx-auto p-6">
-        {/* 🖼️ Blog image */}
-        {blog.image && (
+        {/* Blog image */}
+        {getImageUrl(blog.image) && (
           <img
-            src={
-              blog.image.startsWith("http")
-                ? blog.image
-                : `http://localhost:8000/${blog.image.replace(/^\/+/, "")}`
-            }
+            src={getImageUrl(blog.image)!}
             alt={blog.title}
             className="w-full h-64 object-cover rounded-3xl mb-5 hover:scale-105 transition-transform duration-300"
           />
         )}
 
-        {/* 🧾 Blog Info */}
+        {/* Blog title & author */}
         <h1 className="text-4xl font-bold mb-2">{blog.title}</h1>
         <p className="text-gray-400 mb-6">
-          By {blog.author} • Date:
+          By {blog.author} •{" "}
           {new Date(blog.createdAt).toLocaleDateString(undefined, {
             year: "numeric",
             month: "long",
@@ -83,11 +48,8 @@ export default function BlogDetail() {
           })}
         </p>
 
-        {/* 📝 Markdown Preview (same as Add/Edit) */}
-        <div
-          data-color-mode="dark"
-          className=" p-6 rounded-2xl shadow-lg mb-10"
-        >
+        {/* Markdown content */}
+        <div data-color-mode="dark" className="p-6 rounded-2xl shadow-lg mb-10">
           <MDEditor.Markdown
             source={markdownContent}
             style={{
@@ -100,7 +62,7 @@ export default function BlogDetail() {
           />
         </div>
 
-        {/* 🔙 Back button */}
+        {/* Back button */}
         <button
           onClick={() => navigate(-1)}
           className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"

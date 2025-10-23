@@ -1,106 +1,44 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import MDEditor from "@uiw/react-md-editor";
-import "@uiw/react-md-editor/markdown-editor.css";
-import "@uiw/react-markdown-preview/markdown.css";
-
-interface Blog {
-  id: number;
-  title: string;
-  author: string;
-  content: string;
-  image: string;
-}
+import { useBlog, useEditBlog } from "../../../hooks/useBlogs";
 
 export default function EditBlog() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
+  const { data: blog, isLoading, isError } = useBlog(id);
+  const editBlog = useEditBlog();
+
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
-  const [content, setContent] = useState<string>("");
+  const [content, setContent] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
 
-  // -------------------- Fetch existing blog --------------------
   useEffect(() => {
-    const fetchBlog = async () => {
-      try {
-        const res = await axios.get<Blog>(
-          `http://localhost:8000/api/blogs/${id}`
+    if (blog) {
+      setTitle(blog.title);
+      setAuthor(blog.author);
+      setContent(blog.content || "");
+      if (blog.image)
+        setPreviewImage(
+          blog.image.startsWith("http")
+            ? blog.image
+            : `http://localhost:8000/${blog.image.replace(/^\/+/, "")}`
         );
-        const blog = res.data;
+    }
+  }, [blog]);
 
-        setTitle(blog.title);
-        setAuthor(blog.author);
-        setContent(blog.content);
-
-        // ✅ Convert relative path to full URL for preview
-        const imageUrl = blog.image.startsWith("http")
-          ? blog.image
-          : `http://localhost:8000/${blog.image.replace(/^\/+/, "")}`;
-
-        setPreviewImage(imageUrl);
-      } catch (error) {
-        console.error("❌ Error fetching blog:", error);
-        alert("Blog not found!");
-        navigate("/dashboard/view");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchBlog();
-  }, [id, navigate]);
-
-  // -------------------- Handle Featured Image Change --------------------
-  const handleFeaturedImageChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     setImage(file);
-
-    // Show preview of newly selected file
     setPreviewImage(file ? URL.createObjectURL(file) : null);
   };
 
-  // -------------------- Insert image into Markdown --------------------
-  const handleInsertImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("image", file);
-    setUploading(true);
-
-    try {
-      const res = await axios.post(
-        "http://localhost:8000/api/upload",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-
-      const imageUrl = res.data?.url;
-      if (!imageUrl) throw new Error("No image URL returned");
-
-      setContent((prev) => `${prev}\n\n![alt text](${imageUrl})\n`);
-      alert("✅ Image inserted into Markdown!");
-    } catch (error) {
-      console.error("❌ Error uploading image:", error);
-      alert("Failed to upload image");
-    } finally {
-      setUploading(false);
-      e.target.value = ""; // reset input
-    }
-  };
-
-  // -------------------- Submit updated blog --------------------
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!id) return;
 
     const formData = new FormData();
     formData.append("title", title);
@@ -108,22 +46,25 @@ export default function EditBlog() {
     formData.append("content", content);
     if (image) formData.append("image", image);
 
-    try {
-      await axios.put(`http://localhost:8000/api/blogs/${id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      alert("✅ Blog updated successfully!");
-      navigate("/dashboard/view");
-    } catch (error) {
-      console.error("❌ Error updating blog:", error);
-      alert("Failed to update blog");
-    }
+    editBlog.mutate(
+      { id, formData },
+      {
+        onSuccess: () => {
+          alert("✅ Blog updated successfully!");
+          navigate("/dashboard/view");
+        },
+        onError: () => alert("❌ Failed to update blog"),
+      }
+    );
   };
 
-  if (loading)
+  if (isLoading)
     return <p className="text-center mt-10 text-gray-400">Loading...</p>;
+  if (isError)
+    return (
+      <p className="text-center mt-10 text-red-500">Failed to load blog.</p>
+    );
 
-  // -------------------- Render --------------------
   return (
     <div className="bg-black min-h-screen text-white flex justify-center items-center p-6">
       <form
@@ -140,7 +81,6 @@ export default function EditBlog() {
           required
           className="w-full p-2 rounded bg-gray-800 text-white"
         />
-
         <input
           type="text"
           value={author}
@@ -150,64 +90,36 @@ export default function EditBlog() {
           className="w-full p-2 rounded bg-gray-800 text-white"
         />
 
-        {/* Markdown Editor */}
-        <div data-color-mode="dark" className="space-y-2">
-          <label className="block text-sm text-gray-400">
-            Content (Markdown)
-          </label>
-
-          <div className="flex justify-end mb-1">
-            <label className="cursor-pointer bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm transition">
-              {uploading ? "Uploading..." : "Insert Image"}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleInsertImage}
-                className="hidden"
-                disabled={uploading}
-              />
-            </label>
-          </div>
-
+        <div data-color-mode="dark">
+          <label className="block text-sm text-gray-400 mb-1">Content</label>
           <MDEditor
             value={content}
             onChange={(val) => setContent(val || "")}
             height={300}
             preview="live"
-            textareaProps={{
-              placeholder:
-                "Edit your blog using Markdown... e.g., **bold**, _italic_, ![alt](image_url)",
-            }}
           />
         </div>
 
-        {/* Featured Image Upload */}
-        <div className="mt-4">
+        <div>
           <label className="block text-sm text-gray-400 mb-1">
             Featured Image
           </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFeaturedImageChange}
-            className="w-full text-gray-300"
-          />
+          <input type="file" accept="image/*" onChange={handleImageChange} />
+          {previewImage && (
+            <img
+              src={previewImage}
+              alt="Preview"
+              className="w-40 h-32 object-cover rounded-md mt-2"
+            />
+          )}
         </div>
-
-        {/* Preview Image */}
-        {previewImage && (
-          <img
-            src={previewImage}
-            alt="Preview"
-            className="w-full h-64 object-cover rounded-lg mt-3"
-          />
-        )}
 
         <button
           type="submit"
-          className="bg-green-600 hover:bg-green-700 w-full py-2 rounded-lg transition"
+          disabled={editBlog.isPending}
+          className="bg-green-600 hover:bg-green-700 w-full py-2 rounded-lg transition disabled:opacity-50"
         >
-          Update Blog
+          {editBlog.isPending ? "Updating..." : "Update Blog"}
         </button>
       </form>
     </div>
