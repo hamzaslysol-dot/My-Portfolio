@@ -4,7 +4,7 @@ import About from "./components/home/about";
 import Experience from "./components/home/experience";
 import Landing from "./components/home/landing";
 import Services from "./components/home/services";
-import MyWork from "./components/home/myWork";
+import MyWork from "./components/home/work";
 import Contact from "./components/home/contact";
 import Navbar from "./components/common/navBar";
 import BlogDetail from "./components/pages/blogs/detail";

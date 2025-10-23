@@ -3,7 +3,7 @@ import Landing from "./landing";
 import Experience from "./experience";
 import About from "./about";
 import Services from "./services";
-import MyWork from "./myWork";
+import MyWork from "./work";
 import Contact from "./contact";
 import Footer from "../common/footer";
 import Navbar from "../common/navBar";
