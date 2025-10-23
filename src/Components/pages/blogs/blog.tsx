@@ -5,7 +5,7 @@ import MDEditor from "@uiw/react-md-editor";
 import { Link } from "react-router-dom";
 import Pagination from "../../common/pagenation";
 import Container from "../../common/container";
-import Bg from "../assets/bg.mp4";
+import Bg from "../../../assets/bg.mp4";
 import React from "react";
 
 interface BlogItem {

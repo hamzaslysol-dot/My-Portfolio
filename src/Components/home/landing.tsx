@@ -1,6 +1,6 @@
-import Img from "../assets/image.png";
-import { ChevronDown } from "lucide-react"; // scroll icon
-import "../index.css"; // Ensure Tailwind CSS is imported
+import Img from "../../assets/image.png";
+import { ChevronDown } from "lucide-react";
+import "../../index.css";
 
 const Landing = () => {
   const scrollToNext = () => {

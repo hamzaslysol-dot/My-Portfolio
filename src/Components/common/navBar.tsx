@@ -1,8 +1,8 @@
 // import Hlogo from "../assets/h.png";/
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import "../index.css";
-import Container from "./common/container";
+import "../../index.css"; // Ensure Tailwind CSS is imported
+import Container from "./container";
 
 const links = [
   { ref: "/", text: "Home" },

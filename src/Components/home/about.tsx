@@ -1,4 +1,4 @@
-import Avatar from "../assets/avatar.png";
+import Avatar from "../../assets/avatar.png";
 import Container from "../common/container";
 
 const About = () => {

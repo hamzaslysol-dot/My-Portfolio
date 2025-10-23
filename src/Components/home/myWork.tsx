@@ -1,13 +1,13 @@
 import Container from "../common/container";
 import FlippingText from "../common/flippingText";
 
-import Project1 from "../assets/download.png";
-import Game from "../assets/download.png";
-import Project2 from "../assets/download (2).jpeg";
-import Project3 from "../assets/download (3).jpeg";
-import Project4 from "../assets/download (4).jpeg";
-import Project5 from "../assets/download (5).jpeg";
-import Project6 from "../assets/download (6).jpeg";
+import Project1 from "../../assets/download.png";
+import Game from "../../assets/download.png";
+import Project2 from "../../assets/download (2).jpeg";
+import Project3 from "../../assets/download (3).jpeg";
+import Project4 from "../../assets/download (4).jpeg";
+import Project5 from "../../assets/download (5).jpeg";
+import Project6 from "../../assets/download (6).jpeg";
 
 const projects = [
   {

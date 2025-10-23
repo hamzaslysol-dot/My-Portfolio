@@ -1,7 +1,7 @@
-import Fb from "../assets/facebook.png";
-import Ins from "../assets/instagram.png";
-import Link from "../assets/linkedin.png";
-import X from "../assets/twitter.png";
+import Fb from "../../assets/facebook.png";
+import Ins from "../../assets/instagram.png";
+import Link from "../../assets/linkedin.png";
+import X from "../../assets/twitter.png";
 import Container from "./container";
 
 const social = [
