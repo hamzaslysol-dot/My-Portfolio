@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import Container from "./container";
-import Bg from "../assets/bg.mp4";
-import Pagination from "./pagenation";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
+import Pagination from "./pagenation";
+import Container from "./container";
+import Bg from "../assets/bg.mp4";
+import React from "react";
 
 interface BlogItem {
   id: number;
@@ -15,36 +16,33 @@ interface BlogItem {
   createdAt: string;
 }
 
+// Fetch function for React Query
+const fetchBlogs = async (): Promise<BlogItem[]> => {
+  const res = await fetch("http://localhost:8000/api/blogs");
+  if (!res.ok) throw new Error("Failed to fetch blogs");
+  return res.json();
+};
+
 const Blog = () => {
-  const [blogs, setBlogs] = useState<BlogItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const {
+    data: blogs = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["blogs"],
+    queryFn: fetchBlogs,
+    staleTime: 1000 * 60 * 2, // 2 minutes caching
+  });
+
+  const [currentPage, setCurrentPage] = React.useState(1);
   const blogsPerPage = 6;
-
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        const response = await fetch("http://localhost:8000/api/blogs");
-        if (!response.ok) throw new Error("Failed to fetch blogs");
-        const data = await response.json();
-        setBlogs(data);
-      } catch (err: any) {
-        console.error("❌ Error fetching blogs:", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBlogs();
-  }, []);
 
   const totalPages = Math.ceil(blogs.length / blogsPerPage);
   const startIndex = (currentPage - 1) * blogsPerPage;
   const visibleBlogs = blogs.slice(startIndex, startIndex + blogsPerPage);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="grid grid-cols-2 justify-center items-center h-screen text-white">
         <h2>Loading blogs...</h2>
@@ -52,16 +50,17 @@ const Blog = () => {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <div className="grid grid-cols-2 items-center h-screen text-red-500">
-        <h2>Error: {error}</h2>
+        <h2>Error: {(error as Error).message}</h2>
       </div>
     );
   }
 
   return (
     <div className="relative min-h-screen text-white overflow-hidden">
+      {/* Background video */}
       <video
         autoPlay
         loop
@@ -99,8 +98,8 @@ const Blog = () => {
                 />
 
                 <p className="text-2xl font-bold mb-2">{blog.title}</p>
-                <p className="text-sm text-gray-400 mb-2">
-                  By {blog.author} Date:
+                <p className="text-sm text-gray-400 mb-2 font-bold">
+                  By {blog.author} | Date:
                   {new Date(blog.createdAt).toLocaleDateString()}
                 </p>
                 <p className="text-gray-300 mb-2">
