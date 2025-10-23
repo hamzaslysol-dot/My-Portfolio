@@ -1,6 +1,7 @@
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import { useQuery } from "@tanstack/react-query";
+import MDEditor from "@uiw/react-md-editor";
 import { Link } from "react-router-dom";
 import Pagination from "./pagenation";
 import Container from "./container";
@@ -102,11 +103,15 @@ const Blog = () => {
                   By {blog.author} | Date:
                   {new Date(blog.createdAt).toLocaleDateString()}
                 </p>
-                <p className="text-gray-300 mb-2">
-                  {blog.content.length > 150
-                    ? blog.content.slice(0, 150) + "..."
-                    : blog.content}
-                </p>
+                <div className="text-gray-300 mb-2 prose max-w-none prose-p:text-gray-300 prose-headings:text-white backdrop-blur-sm prose-strong:text-white">
+                  <MDEditor.Markdown
+                    source={
+                      blog.content.length > 150
+                        ? blog.content.slice(0, 150) + "..."
+                        : blog.content
+                    }
+                  />
+                </div>
 
                 <Link
                   to={`/blog/${blog.id}`}
