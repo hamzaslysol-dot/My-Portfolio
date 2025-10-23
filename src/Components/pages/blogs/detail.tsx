@@ -33,7 +33,7 @@ export default function BlogDetail() {
           <img
             src={getImageUrl(blog.image)!}
             alt={blog.title}
-            className="w-full h-64 object-cover rounded-3xl mb-5 hover:scale-105 transition-transform duration-300"
+            className="w-full h-auto object-cover rounded-3xl mb-5 hover:scale-105 transition-transform duration-300"
           />
         )}
 

@@ -74,15 +74,35 @@ export default function AddBlog() {
 
         <div>
           <label className="block text-sm text-gray-400 mb-1">
-            Featured Image
+            Insert Image
           </label>
-          <input type="file" accept="image/*" onChange={handleImageChange} />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="border-2 border-gray-500 w-full p-2 hover:bg-blue-300"
+          />
+
           {previewImage && (
-            <img
-              src={previewImage}
-              alt="Preview"
-              className="w-40 h-32 object-cover rounded-md mt-2"
-            />
+            <div className="relative w-40 h-32 mt-2">
+              {/* Remove button */}
+              <button
+                type="button"
+                onClick={() => {
+                  setPreviewImage(null);
+                  setImage(null); // also reset your file state
+                }}
+                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold hover:bg-red-700 transition"
+              >
+                -
+              </button>
+              {/* Preview image */}
+              <img
+                src={previewImage}
+                alt="Preview"
+                className="w-40 h-32 object-cover rounded-md"
+              />
+            </div>
           )}
         </div>
 
