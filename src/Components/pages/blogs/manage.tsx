@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Pagination from "../../pagenation";
+import Pagination from "../../common/pagenation";
 import { useBlogs, useDeleteBlog } from "../../../hooks/useBlogs";
 
 export default function ManageBlogs() {

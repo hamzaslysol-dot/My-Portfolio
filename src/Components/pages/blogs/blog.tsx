@@ -3,8 +3,8 @@ import "@uiw/react-markdown-preview/markdown.css";
 import { useQuery } from "@tanstack/react-query";
 import MDEditor from "@uiw/react-md-editor";
 import { Link } from "react-router-dom";
-import Pagination from "./pagenation";
-import Container from "./container";
+import Pagination from "../../common/pagenation";
+import Container from "../../common/container";
 import Bg from "../assets/bg.mp4";
 import React from "react";
 

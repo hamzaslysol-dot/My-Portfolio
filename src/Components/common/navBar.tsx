@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import "../index.css";
-import Container from "./container";
+import Container from "./common/container";
 
 const links = [
   { ref: "/", text: "Home" },

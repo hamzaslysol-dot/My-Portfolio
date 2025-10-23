@@ -1,5 +1,5 @@
-import Container from "./container";
-import FlippingText from "./flippingText";
+import Container from "../common/container";
+import FlippingText from "../common/flippingText";
 
 import Project1 from "../assets/download.png";
 import Game from "../assets/download.png";

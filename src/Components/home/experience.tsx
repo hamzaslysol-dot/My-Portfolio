@@ -1,4 +1,4 @@
-import Container from "./container";
+import Container from "../common/container";
 
 const exp = [
   { id: 1, heading: "15+", detail: "Years of Experience" },

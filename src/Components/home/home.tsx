@@ -5,8 +5,8 @@ import About from "./about";
 import Services from "./services";
 import MyWork from "./myWork";
 import Contact from "./contact";
-import Footer from "./footer";
-import Navbar from "./navBar";
+import Footer from "../common/footer";
+import Navbar from "../common/navBar";
 
 const Home = () => {
   const [show, setShow] = useState(false);
