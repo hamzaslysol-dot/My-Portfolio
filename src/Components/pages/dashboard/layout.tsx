@@ -1,7 +1,7 @@
 import { useNavigate, Outlet, Link, useLocation } from "react-router-dom";
-import { useState, ChangeEvent } from "react";
-import { Menu, LayoutDashboard, LogOut, User } from "lucide-react";
-import axios from "axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Menu, LayoutDashboard, LogOut } from "lucide-react";
+import { useState } from "react";
 
 interface UserType {
   id?: string;
@@ -13,58 +13,37 @@ interface UserType {
 export default function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
+  const queryClient = useQueryClient();
 
+  // ✅ Get user from localStorage (as fallback)
   const storedUser = JSON.parse(
     localStorage.getItem("user") || "null"
   ) as UserType | null;
-  const [user, setUser] = useState<UserType | null>(storedUser);
+
+  // ✅ Hydrate React Query cache on first load if missing
+  const cachedUser = queryClient.getQueryData<UserType>(["user"]) || storedUser;
+  if (!queryClient.getQueryData(["user"]) && storedUser) {
+    queryClient.setQueryData(["user"], storedUser);
+  }
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/dashboard/login", { replace: true });
-  };
+  // ✅ React Query logout mutation
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      // Could call an API endpoint here if you have one for logout
+      return new Promise((resolve) => {
+        localStorage.clear();
+        queryClient.clear();
+        resolve(true);
+      });
+    },
+    onSuccess: () => {
+      navigate("/dashboard/login", { replace: true });
+    },
+  });
 
-  // ✅ Upload profile image to backend
-  const handleProfileChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
-
-    const formData = new FormData();
-    formData.append("image", file); // must match multer.single("image")
-
-    try {
-      const res = await axios.post<{ url: string }>(
-        "http://localhost:8000/api/upload",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-
-      const imageUrl = res.data.url;
-
-      // Optionally: Save permanently in backend
-      await axios.put(
-        `http://localhost:8000/api/users/${user.id}/profile`,
-        { picture: imageUrl },
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
-
-      // Update locally
-      const updatedUser = { ...user, picture: imageUrl };
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      setUser(updatedUser);
-    } catch (error: any) {
-      console.error(
-        "❌ Failed to upload image:",
-        error.response || error.message
-      );
-      alert("Failed to upload image. Check backend console for details.");
-    }
-  };
+  const handleLogout = () => logoutMutation.mutate();
 
   const navLinks = [
     {
@@ -72,7 +51,11 @@ export default function DashboardLayout() {
       path: "/dashboard/view",
       icon: <LayoutDashboard size={18} />,
     },
-    { name: "Author", path: "", icon: <LayoutDashboard size={18} /> },
+    {
+      name: "Author",
+      path: "/dashboard/author",
+      icon: <LayoutDashboard size={18} />,
+    },
   ];
 
   return (
@@ -96,31 +79,23 @@ export default function DashboardLayout() {
               sidebarOpen ? "translate-x-0" : "-translate-x-full"
             } md:translate-x-0`}
         >
-          <h2 className="text-xl font-bold mb-6 text-center">Admin Panel</h2>
-
-          {user && (
-            <div className="flex flex-col items-center mb-8">
-              {/* Upload Button */}
-              <label className="flex items-center justify-center mb-2 cursor-pointer gap-2 text-blue-400 hover:text-blue-500">
-                <User size={16} />
-                Set Profile
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleProfileChange}
-                  className="hidden"
-                />
-              </label>
-
+          <h2 className="text-xl font-bold mb-6 text-center">
+            Admin Dashboard
+          </h2>
+          {/* Profile Image */}
+          {/* {cachedUser && (
+            <div className="text-center mb-6">
               <img
-                src={user.picture || "/default-avatar.png"}
+                src={cachedUser.picture || "/default-avatar.png"}
                 alt="Profile"
-                className="w-16 h-16 rounded-full mb-2 border border-gray-700 object-cover"
+                className="w-16 h-16 rounded-full mx-auto mb-2 border border-gray-700 object-cover"
               />
-              <p className="font-medium">{user.name}</p>
-              <p className="text-gray-400 text-sm">Admin</p>
+              <p className="font-medium">{cachedUser.name}</p>
+              <p className="text-gray-400 text-sm">
+                {cachedUser.role || "Admin"}
+              </p>
             </div>
-          )}
+          )} */}
 
           {/* Navigation Links */}
           <nav className="space-y-3">
@@ -145,10 +120,16 @@ export default function DashboardLayout() {
           {/* Logout Button */}
           <button
             onClick={handleLogout}
-            className="mt-8 flex items-center gap-2 bg-red-600 w-full justify-center py-2 rounded-lg hover:bg-red-700 transition-colors"
+            disabled={logoutMutation.isPending}
+            className={`mt-8 flex items-center gap-2 w-full justify-center py-2 rounded-lg transition-colors 
+              ${
+                logoutMutation.isPending
+                  ? "bg-gray-600 cursor-not-allowed"
+                  : "bg-red-600 hover:bg-red-700"
+              }`}
           >
             <LogOut size={18} />
-            Logout
+            {logoutMutation.isPending ? "Logging out..." : "Logout"}
           </button>
         </aside>
 

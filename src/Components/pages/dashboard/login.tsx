@@ -1,47 +1,62 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+
+interface LoginResponse {
+  token: string;
+  user: {
+    id: string;
+    name: string;
+    role?: string;
+    picture?: string;
+  };
+}
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  // ✅ React Query mutation for login
+  const loginMutation = useMutation({
+    mutationFn: async () => {
+      const res = await axios.post<LoginResponse>(
+        "http://localhost:8000/api/auth/login",
+        { username, password }
+      );
+      return res.data;
+    },
 
-    try {
-      const res = await axios.post("http://localhost:8000/api/auth/login", {
-        username,
-        password,
-      });
+    onSuccess: (data) => {
+      const { token, user } = data;
 
-      // ✅ Expecting backend to return token + user info
-      if (res.status === 200) {
-        const { token, user } = res.data;
+      // Save credentials to localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("role", user.role || "user");
 
-        // Save credentials
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user));
-        localStorage.setItem("role", user.role || "user");
+      // ✅ Update React Query cache
+      queryClient.setQueryData(["user"], user);
 
-        alert("✅ Login successful!");
-        navigate("/dashboard/view"); // Redirect to view dashboard
-      }
-    } catch (err: any) {
-      console.error("❌ Login error:", err);
-      if (err.response?.status === 401) {
-        setError("Invalid username or password.");
+      alert("✅ Login successful!");
+      navigate("/dashboard/view");
+    },
+
+    onError: (error: any) => {
+      console.error("❌ Login error:", error);
+      if (error.response?.status === 401) {
+        alert("Invalid username or password.");
       } else {
-        setError("Something went wrong. Please try again.");
+        alert("Something went wrong. Please try again.");
       }
-    } finally {
-      setLoading(false);
-    }
+    },
+  });
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    loginMutation.mutate();
   };
 
   return (
@@ -54,9 +69,10 @@ const LoginPage: React.FC = () => {
           Admin Login
         </h2>
 
-        {error && (
+        {loginMutation.isError && (
           <p className="text-red-500 bg-red-100 rounded-md p-2 text-center mb-4">
-            {error}
+            {(loginMutation.error as any)?.response?.data?.message ||
+              "Login failed. Please check your credentials."}
           </p>
         )}
 
@@ -86,14 +102,14 @@ const LoginPage: React.FC = () => {
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={loginMutation.isPending}
           className={`w-full py-2 rounded-md font-semibold ${
-            loading
+            loginMutation.isPending
               ? "bg-gray-600 cursor-not-allowed"
               : "bg-blue-600 hover:bg-blue-700"
           } text-white transition`}
         >
-          {loading ? "Logging in..." : "Login"}
+          {loginMutation.isPending ? "Logging in..." : "Login"}
         </button>
 
         <p className="text-gray-400 text-center mt-4">
