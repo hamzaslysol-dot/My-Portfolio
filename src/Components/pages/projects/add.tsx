@@ -1,15 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import MDEditor from "@uiw/react-md-editor";
-import { useAddBlog } from "../hooks/useBlogs";
+import { useAddProject } from "../hooks/useProjects";
 
-export default function AddBlog() {
+export default function AddProject() {
   const navigate = useNavigate();
-  const addBlog = useAddBlog();
+  const addProject = useAddProject();
 
   const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [content, setContent] = useState("");
+  const [link, setLink] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
@@ -23,16 +21,15 @@ export default function AddBlog() {
     e.preventDefault();
     const formData = new FormData();
     formData.append("title", title);
-    formData.append("author", author);
-    formData.append("content", content);
+    formData.append("link", link);
     if (image) formData.append("image", image);
 
-    addBlog.mutate(formData, {
+    addProject.mutate(formData, {
       onSuccess: () => {
-        alert("✅ Blog added successfully!");
-        navigate("/dashboard/view");
+        alert("✅ Project added successfully!");
+        navigate("/dashboard/projects/view");
       },
-      onError: () => alert("❌ Failed to add blog"),
+      onError: () => alert("❌ Failed to add project"),
     });
   };
 
@@ -42,7 +39,7 @@ export default function AddBlog() {
         onSubmit={handleSubmit}
         className="bg-gray-900 p-8 rounded-2xl w-full max-w-2xl shadow-lg space-y-4"
       >
-        <h2 className="text-2xl font-bold mb-4">📝 Add New Blog</h2>
+        <h2 className="text-2xl font-bold mb-4">📝 Add New Project</h2>
 
         <input
           type="text"
@@ -55,22 +52,12 @@ export default function AddBlog() {
 
         <input
           type="text"
-          placeholder="Author"
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)}
+          placeholder="Link"
+          value={link}
+          onChange={(e) => setLink(e.target.value)}
           required
           className="w-full p-2 rounded bg-gray-800 text-white"
         />
-
-        <div data-color-mode="dark">
-          <label className="block text-sm text-gray-400 mb-1">Content</label>
-          <MDEditor
-            value={content}
-            onChange={(val) => setContent(val || "")}
-            height={300}
-            preview="live"
-          />
-        </div>
 
         <div>
           <label className="block text-sm text-gray-400 mb-1">
@@ -108,10 +95,10 @@ export default function AddBlog() {
 
         <button
           type="submit"
-          disabled={addBlog.isPending}
+          disabled={addProject.isPending}
           className="bg-green-600 hover:bg-green-700 w-full py-2 rounded-lg transition disabled:opacity-50"
         >
-          {addBlog.isPending ? "Adding..." : "Add Blog"}
+          {addProject.isPending ? "Adding..." : "Add Project"}
         </button>
       </form>
     </div>

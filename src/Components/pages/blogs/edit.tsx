@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import MDEditor from "@uiw/react-md-editor";
-import { useBlog, useEditBlog } from "../../../hooks/useBlogs";
+import { useBlog, useEditBlog } from "../hooks/useBlogs";
 
 export default function EditBlog() {
   const { id } = useParams<{ id: string }>();

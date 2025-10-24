@@ -4,7 +4,7 @@ import About from "./components/home/about";
 import Experience from "./components/home/experience";
 import Landing from "./components/home/landing";
 import Services from "./components/home/services";
-import MyWork from "./components/home/work";
+import MyWork from "./components/home/projects";
 import Contact from "./components/home/contact";
 import Navbar from "./components/common/navBar";
 import BlogDetail from "./components/pages/blogs/detail";
@@ -15,6 +15,8 @@ import Blog from "./components/pages/blogs/blog";
 import AddBlogForm from "./components/pages/blogs/add";
 import EditBlog from "./components/pages/blogs/edit";
 import RegisterPage from "./components/pages/blogs/register";
+import AddProject from "./components/pages/projects/add";
+import ManageProjects from "./components/pages/projects/manage";
 
 function App() {
   const location = useLocation();
@@ -60,15 +62,22 @@ function App() {
 
         {/* 🔐 Protected Admin Routes */}
         <Route element={<AdminRoute />}>
+          {/* blogs */}
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<Navigate to="view" replace />} />
             <Route path="view" element={<ManageBlogs />} />
             <Route path="add" element={<AddBlogForm />} />
             <Route path="manage" element={<ManageBlogs />} />
             <Route path="edit/:id" element={<EditBlog />} />
+            {/* Projects */}
+            <Route path="projects">
+              <Route index element={<Navigate to="view" replace />} />
+              <Route path="view" element={<ManageProjects />} />
+              <Route path="add" element={<AddProject />} />
+              <Route path="manage" element={<ManageProjects />} />
+            </Route>
           </Route>
         </Route>
-
         {/* 🚫 404 Fallback */}
         <Route
           path="*"

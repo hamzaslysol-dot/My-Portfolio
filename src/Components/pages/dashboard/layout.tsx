@@ -52,8 +52,8 @@ export default function DashboardLayout() {
       icon: <LayoutDashboard size={18} />,
     },
     {
-      name: "Author",
-      path: "/dashboard/author",
+      name: "Projects",
+      path: "/dashboard/projects/view",
       icon: <LayoutDashboard size={18} />,
     },
   ];

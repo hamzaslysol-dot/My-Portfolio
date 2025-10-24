@@ -5,9 +5,8 @@ export default function DashboardSidebar() {
   const location = useLocation();
 
   const links = [
-    { name: "Dashboard Home", path: "/dashboard" },
-    { name: "Add Blog", path: "/dashboard/add" },
-    { name: "View Blogs", path: "/dashboard/view" },
+    { name: "Manage Blogs", path: "/dashboard/blogs" },
+    { name: "Manage Projects", path: "/dashboard/projects" },
   ];
 
   return (

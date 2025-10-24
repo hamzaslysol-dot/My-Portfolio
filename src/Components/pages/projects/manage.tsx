@@ -1,34 +1,40 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../../common/pagenation";
-import { useBlogs, useDeleteBlog } from "../hooks/useBlogs";
+import {
+  useProjects,
+  useDeleteProject,
+  Project,
+} from "../../pages/hooks/useProjects";
 
-export default function ManageBlogs() {
+export default function ManageProjects() {
   const navigate = useNavigate();
-  const { data: blogs, isLoading, isError } = useBlogs();
-  const deleteBlog = useDeleteBlog();
+  const { data: projects, isLoading, isError } = useProjects();
+  const deleteProject = useDeleteProject();
 
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
 
   if (isLoading)
-    return <p className="text-center text-gray-400 mt-10">Loading blogs...</p>;
+    return (
+      <p className="text-center text-gray-400 mt-10">Loading projects...</p>
+    );
   if (isError)
     return (
-      <p className="text-center text-red-500 mt-10">Failed to load blogs.</p>
+      <p className="text-center text-red-500 mt-10">Failed to load projects.</p>
     );
 
-  const filteredBlogs =
-    blogs?.filter(
-      (b) =>
-        b.title.toLowerCase().includes(search.toLowerCase()) ||
-        b.author.toLowerCase().includes(search.toLowerCase())
+  const filteredProjects =
+    projects?.filter(
+      (project: Project) =>
+        project.title.toLowerCase().includes(search.toLowerCase()) ||
+        project.link.toLowerCase().includes(search.toLowerCase())
     ) || [];
 
-  const totalPages = Math.ceil(filteredBlogs.length / rowsPerPage);
+  const totalPages = Math.ceil(filteredProjects.length / rowsPerPage);
   const startIndex = (currentPage - 1) * rowsPerPage;
-  const visibleBlogs = filteredBlogs.slice(
+  const visibleProjects = filteredProjects.slice(
     startIndex,
     startIndex + rowsPerPage
   );
@@ -37,18 +43,20 @@ export default function ManageBlogs() {
     <div className="bg-black min-h-screen text-white p-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
-          <h1 className="text-3xl font-bold text-gray-200">📰 Manage Blogs</h1>
+          <h1 className="text-3xl font-bold text-gray-200">
+            📰 Manage Projects
+          </h1>
           <button
-            onClick={() => navigate("/dashboard/add")}
+            onClick={() => navigate("/dashboard/projects/add")}
             className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-semibold transition"
           >
-            ➕ Add New Blog
+            ➕ Add New Project
           </button>
         </div>
 
         <input
           type="text"
-          placeholder="Search by title or author..."
+          placeholder="Search by title or link..."
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
@@ -63,36 +71,35 @@ export default function ManageBlogs() {
               <tr>
                 <th className="p-3">Image</th>
                 <th className="p-3">Title</th>
-                <th className="p-3">Author</th>
-                <th className="p-3">Date</th>
-                <th className="p-3 text-center">Actions</th>
+                <th className="p-3">Link</th>
+                <th className="p-3">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {visibleBlogs.length === 0 ? (
+              {visibleProjects.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="text-center py-6 text-gray-400">
-                    No blogs found.
+                  <td colSpan={4} className="text-center py-6 text-gray-400">
+                    No projects found.
                   </td>
                 </tr>
               ) : (
-                visibleBlogs.map((blog) => (
+                visibleProjects.map((project: Project) => (
                   <tr
-                    key={blog.id}
+                    key={project.id}
                     className="border-t border-gray-800 hover:bg-gray-900 transition"
                   >
                     <td className="p-3">
-                      {blog.image ? (
+                      {project.image ? (
                         <img
                           src={
-                            blog.image.startsWith("http")
-                              ? blog.image
-                              : `http://localhost:8000/${blog.image.replace(
+                            project.image.startsWith("http")
+                              ? project.image
+                              : `http://localhost:8000/${project.image.replace(
                                   /^\/+/,
                                   ""
                                 )}`
                           }
-                          alt={blog.title}
+                          alt={project.title}
                           className="w-20 h-14 object-cover rounded-md border border-gray-700"
                         />
                       ) : (
@@ -101,29 +108,14 @@ export default function ManageBlogs() {
                         </div>
                       )}
                     </td>
-                    <td className="p-3">{blog.title}</td>
-                    <td className="p-3">{blog.author}</td>
-                    <td className="p-3 text-gray-400">
-                      {new Date(blog.createdAt).toLocaleDateString()}
-                    </td>
+                    <td className="p-3">{project.title}</td>
+                    <td className="p-3">{project.link}</td>
                     <td className="p-3 text-center space-x-3">
                       <button
-                        onClick={() => navigate(`/dashboard/edit/${blog.id}`)}
-                        className="text-blue-400 hover:text-blue-500 font-medium"
-                      >
-                        ✏️ Edit
-                      </button>
-                      <button
-                        onClick={() => deleteBlog.mutate(blog.id)}
+                        onClick={() => deleteProject.mutate(project.id)}
                         className="text-red-500 hover:text-red-600 font-medium"
                       >
                         🗑️ Delete
-                      </button>
-                      <button
-                        onClick={() => navigate(`/blog/${blog.id}`)}
-                        className="text-green-400 hover:text-green-500 font-medium"
-                      >
-                        🔍 View
                       </button>
                     </td>
                   </tr>
