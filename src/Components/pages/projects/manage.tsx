@@ -91,14 +91,7 @@ export default function ManageProjects() {
                     <td className="p-3">
                       {project.image ? (
                         <img
-                          src={
-                            project.image.startsWith("http")
-                              ? project.image
-                              : `http://localhost:8000/${project.image.replace(
-                                  /^\/+/,
-                                  ""
-                                )}`
-                          }
+                          src={`http://localhost:8000${project.image}`}
                           alt={project.title}
                           className="w-20 h-14 object-cover rounded-md border border-gray-700"
                         />
