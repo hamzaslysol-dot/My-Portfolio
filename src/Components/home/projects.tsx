@@ -1,58 +1,7 @@
-import Container from "../common/container";
+import { useProjects } from "../pages/hooks/useProjects";
 import FlippingText from "../common/flippingText";
-
-import Project1 from "../../assets/download.png";
 import Game from "../../assets/download.png";
-import Project2 from "../../assets/download (2).jpeg";
-import Project3 from "../../assets/download (3).jpeg";
-import Project4 from "../../assets/download (4).jpeg";
-import Project5 from "../../assets/download (5).jpeg";
-import Project6 from "../../assets/download (6).jpeg";
-
-const projects = [
-  {
-    id: 1,
-    imgSrc: Project1,
-    label: "Game Hub",
-    alt: "Screenshot of Game Hub project",
-    href: "https://rawg-wine.vercel.app/",
-  },
-  {
-    id: 2,
-    imgSrc: Project2,
-    label: "Project 2",
-    alt: "Screenshot of Project 2",
-    href: "#",
-  },
-  {
-    id: 3,
-    imgSrc: Project3,
-    label: "Project 3",
-    alt: "Screenshot of Project 3",
-    href: "#",
-  },
-  {
-    id: 4,
-    imgSrc: Project4,
-    label: "Project 4",
-    alt: "Screenshot of Project 4",
-    href: "#",
-  },
-  {
-    id: 5,
-    imgSrc: Project5,
-    label: "Project 5",
-    alt: "Screenshot of Project 5",
-    href: "#",
-  },
-  {
-    id: 6,
-    imgSrc: Project6,
-    label: "Project 6",
-    alt: "Screenshot of Project 6",
-    href: "#",
-  },
-];
+import Container from "../common/container";
 
 const options = [
   { id: 1, option: "All Projects" },
@@ -61,6 +10,8 @@ const options = [
 ];
 
 const MyWork = () => {
+  const { data: projects, isLoading, isError } = useProjects();
+
   return (
     <div>
       <div className="bg-black">
@@ -87,24 +38,38 @@ const MyWork = () => {
 
           {/* Projects Section */}
           <Container>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 pt-20 gap-10">
-              {projects.map((project) => (
-                <div key={project.id}>
-                  <a href={project.href} rel="noopener noreferrer">
-                    <img
-                      src={project.imgSrc}
-                      alt={project.alt}
-                      className="mt-5 mx-auto rounded-2xl shadow-lg hover:scale-105 transition-transform duration-300"
-                    />
-                  </a>
-                  <p className="font-bold text-xl text-center mt-2">
-                    <a href={project.href} rel="noopener noreferrer">
-                      {project.label}
+            {isLoading ? (
+              <p className="text-center text-gray-400 mt-10">
+                Loading projects...
+              </p>
+            ) : isError ? (
+              <p className="text-center text-red-500 mt-10">
+                Failed to load projects.
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 pt-20 gap-10">
+                {projects?.map((project) => (
+                  <div key={project.id}>
+                    <a href={project.link} rel="noopener noreferrer">
+                      <img
+                        src={
+                          project.image?.startsWith("http")
+                            ? project.image
+                            : `http://localhost:8000${project.image}`
+                        }
+                        alt={project.title}
+                        className="mt-5 mx-auto rounded-2xl shadow-lg hover:scale-105 transition-transform duration-300"
+                      />
                     </a>
-                  </p>
-                </div>
-              ))}
-            </div>
+                    <p className="font-bold text-xl text-center mt-2">
+                      <a href={project.link} rel="noopener noreferrer">
+                        {project.title}
+                      </a>
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
 
             {/* Client Stories Section */}
             <div className="relative flex justify-between mt-20">
@@ -125,13 +90,7 @@ const MyWork = () => {
                 <p className="pt-5 text-base lg:text-2xl leading-relaxed">
                   "Working on this project was an excellent journey from start
                   to finish. The design came out clean, modern, and perfectly
-                  aligned with our vision. Every detail was carefully crafted to
-                  ensure responsiveness across devices, and the performance is
-                  impressively smooth. The communication throughout the process
-                  was clear, making it easy to share feedback and see
-                  improvements right away. Overall, the project has elevated our
-                  brand’s online presence and left us extremely satisfied with
-                  the results."
+                  aligned with our vision..."
                 </p>
               </div>
               <img

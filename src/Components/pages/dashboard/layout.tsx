@@ -1,6 +1,13 @@
 import { useNavigate, Outlet, Link, useLocation } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Menu, LayoutDashboard, LogOut } from "lucide-react";
+import {
+  Menu,
+  LogOut,
+  Home,
+  FolderKanban,
+  FileText,
+  Settings,
+} from "lucide-react";
 import { useState } from "react";
 
 interface UserType {
@@ -47,14 +54,19 @@ export default function DashboardLayout() {
 
   const navLinks = [
     {
+      name: "Home",
+      path: "/",
+      icon: <Home size={18} />,
+    },
+    {
       name: "Blogs",
       path: "/dashboard/view",
-      icon: <LayoutDashboard size={18} />,
+      icon: <FileText size={18} />,
     },
     {
       name: "Projects",
       path: "/dashboard/projects/view",
-      icon: <LayoutDashboard size={18} />,
+      icon: <FolderKanban size={18} />,
     },
   ];
 
@@ -62,7 +74,10 @@ export default function DashboardLayout() {
     <div className="bg-black min-h-screen text-white">
       {/* Mobile Toggle */}
       <div className="md:hidden flex justify-between items-center px-4 py-3 bg-gray-900">
-        <h2 className="text-lg font-semibold">Admin Dashboard</h2>
+        <h2 className="text-lg font-semibold flex items-center gap-2">
+          <Settings className="w-5 h-5 text-gray-400" />
+          Admin Dashboard
+        </h2>
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="p-2 rounded hover:bg-gray-800"
@@ -79,7 +94,8 @@ export default function DashboardLayout() {
               sidebarOpen ? "translate-x-0" : "-translate-x-full"
             } md:translate-x-0`}
         >
-          <h2 className="text-xl font-bold mb-6 text-center">
+          <h2 className="text-lg font-semibold flex items-center gap-2">
+            <Settings className="w-5 h-5 text-gray-400" />
             Admin Dashboard
           </h2>
           {/* Profile Image */}
