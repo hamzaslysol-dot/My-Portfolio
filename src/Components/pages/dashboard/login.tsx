@@ -112,7 +112,7 @@ const LoginPage: React.FC = () => {
           {loginMutation.isPending ? "Logging in..." : "Login"}
         </button>
 
-        <p className="text-gray-400 text-center mt-4">
+        {/* <p className="text-gray-400 text-center mt-4">
           Don’t have an account?{" "}
           <button
             type="button"
@@ -121,7 +121,7 @@ const LoginPage: React.FC = () => {
           >
             Register
           </button>
-        </p>
+        </p> */}
       </form>
     </div>
   );

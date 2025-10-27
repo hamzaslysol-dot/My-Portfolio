@@ -3,11 +3,11 @@ import FlippingText from "../common/flippingText";
 import Game from "../../assets/download.png";
 import Container from "../common/container";
 
-const options = [
-  { id: 1, option: "All Projects" },
-  { id: 2, option: "Recent Projects" },
-  { id: 3, option: "Layout Projects" },
-];
+// const options = [
+//   { id: 1, option: "All Projects" },
+//   { id: 2, option: "Recent Projects" },
+//   { id: 3, option: "Layout Projects" },
+// ];
 
 const MyWork = () => {
   const { data: projects, isLoading, isError } = useProjects();
@@ -20,20 +20,22 @@ const MyWork = () => {
             {/* Section Title */}
             <div className="relative mb-8 flex justify-between items-center">
               <h2 className="absolute -top-5 text-5xl uppercase font-bold text-outline">
-                My Work
+                Projects
               </h2>
-              <h2 className="text-5xl font-bold relative uppercase">My Work</h2>
+              <h2 className="text-5xl font-bold relative uppercase border-b pb-5">
+                Projects
+              </h2>
               <p className="border-b hidden sm:block border-white text-xl w-fit cursor-pointer hover:opacity-70">
                 Get in Touch
               </p>
             </div>
 
             {/* Project Options */}
-            <div className="hidden md:flex gap-5 flex-wrap">
+            {/* <div className="hidden md:flex gap-5 flex-wrap">
               {options.map((opt) => (
                 <FlippingText option={opt.option} id={opt.id} key={opt.id} />
               ))}
-            </div>
+            </div> */}
           </Container>
 
           {/* Projects Section */}
@@ -58,7 +60,7 @@ const MyWork = () => {
                             : `http://localhost:8000${project.image}`
                         }
                         alt={project.title}
-                        className="mt-5 mx-auto rounded-2xl shadow-lg hover:scale-105 transition-transform duration-300"
+                        className="mt-5 mx-auto rounded-2xl shadow-lg hover:scale-105 transition-transform duration-300 w-full h-64 object-cover"
                       />
                     </a>
                     <p className="font-bold text-xl text-center mt-2">
